@@ -1,0 +1,1457 @@
+<!-- START OF FILE user-dashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>User Dashboard - SkillGuru</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Herr+Von+Muellerhoff&display=swap" rel="stylesheet"> <!-- Signature Font -->
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Libraries: SweetAlert2 & Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        /* =========================================
+           1. CSS VARIABLES & THEME CONFIG
+           ========================================= */
+        :root {
+            /* Core Theme Colors */
+            --primary: #FF512F; 
+            --secondary: #DD2476;
+            --purple-cert: #5D3FD3; /* For Certificate Theme */
+            --accent: #2193b0;
+            --success: #00b09b;
+            --warning: #f2994a;
+            --danger: #e74c3c;
+            
+            /* Backgrounds & Text */
+            --bg-body: #f4f7f6;
+            --bg-card: #ffffff;
+            --bg-sidebar: #ffffff;
+            --text-main: #2d3436;
+            --text-muted: #636e72;
+            --border-color: #dfe6e9;
+            
+            /* Dimensions & Effects */
+            --sidebar-width: 270px;
+            --grad-main: linear-gradient(135deg, #FF512F, #DD2476);
+            --shadow-card: 0 10px 25px rgba(0,0,0,0.06);
+            --radius: 16px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Dark Mode Variables */
+        [data-theme="dark"] {
+            --bg-body: #1a1a2e;
+            --bg-card: #16213e;
+            --bg-sidebar: #0f3460;
+            --text-main: #e94560;
+            --text-muted: #a0a0a0;
+            --border-color: #2a2a40;
+            --shadow-card: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        /* =========================================
+           2. GLOBAL RESET & UTILS
+           ========================================= */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; outline: none; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg-body); color: var(--text-main); overflow-x: hidden; min-height: 100vh; transition: var(--transition); }
+        
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+        img { max-width: 100%; }
+
+        /* =========================================
+           3. SIDEBAR NAVIGATION
+           ========================================= */
+        .sidebar { 
+            position: fixed; top: 0; left: -100%; 
+            width: var(--sidebar-width); height: 100vh; 
+            background: var(--bg-sidebar); z-index: 1000; 
+            transition: var(--transition); 
+            box-shadow: 5px 0 25px rgba(0,0,0,0.05); 
+            overflow-y: auto; border-right: 1px solid var(--border-color);
+        }
+        .sidebar.active { left: 0; }
+        
+        .sidebar-header { 
+            padding: 25px; display: flex; justify-content: space-between; align-items: center; 
+            border-bottom: 1px solid var(--border-color); 
+        }
+        .logo { 
+            font-size: 1.6rem; font-weight: 800; 
+            background: var(--grad-main); -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
+            display: flex; align-items: center; gap: 8px; 
+        }
+        
+        .nav-links { padding: 20px 0; }
+        .menu-item { 
+            padding: 14px 25px; display: flex; align-items: center; gap: 15px; 
+            color: var(--text-muted); font-weight: 500; cursor: pointer; transition: 0.2s; 
+            margin: 4px 15px 4px 0; border-radius: 0 30px 30px 0; font-size: 0.95rem; 
+        }
+        .menu-item:hover { background: rgba(255, 81, 47, 0.05); color: var(--primary); padding-left: 30px; }
+        .menu-item.active-link { 
+            background: linear-gradient(90deg, rgba(255,81,47,0.1), transparent); 
+            color: var(--primary); border-left: 4px solid var(--primary); font-weight: 600; 
+        }
+        .menu-item i { width: 25px; text-align: center; font-size: 1.1rem; }
+        
+        .menu-section-label {
+            padding: 20px 25px 5px; font-size: 0.75rem; text-transform: uppercase; 
+            color: var(--text-muted); font-weight: 700; letter-spacing: 1px; opacity: 0.7;
+        }
+
+        /* =========================================
+           4. HEADER & TOP BAR
+           ========================================= */
+        header { 
+            background: var(--bg-card); padding: 15px 25px; 
+            display: flex; justify-content: space-between; align-items: center; 
+            position: sticky; top: 0; z-index: 100; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03); transition: var(--transition);
+        }
+        
+        .header-left { display: flex; align-items: center; gap: 15px; }
+        .menu-btn { font-size: 1.4rem; color: var(--text-main); cursor: pointer; }
+        
+        .header-right { display: flex; align-items: center; gap: 20px; }
+        
+        /* Notification Bell */
+        .notif-box { position: relative; cursor: pointer; }
+        .notif-icon { font-size: 1.2rem; color: var(--text-muted); transition: 0.3s; }
+        .notif-icon:hover { color: var(--primary); }
+        .notif-badge { 
+            position: absolute; top: -5px; right: -5px; 
+            background: var(--primary); color: white; font-size: 0.65rem; 
+            width: 16px; height: 16px; border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center; font-weight: bold;
+        }
+        
+        /* Theme Toggle */
+        .theme-toggle { cursor: pointer; font-size: 1.2rem; color: var(--text-muted); }
+
+        /* Profile Dropdown */
+        .user-header-profile { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+        .user-header-img { 
+            width: 40px; height: 40px; border-radius: 50%; object-fit: cover; 
+            border: 2px solid var(--primary); padding: 2px; 
+        }
+        .user-name-head { font-size: 0.9rem; font-weight: 600; display: none; }
+        @media(min-width: 768px) { .user-name-head { display: block; } }
+
+        /* =========================================
+           5. MAIN LAYOUT & SECTIONS
+           ========================================= */
+        .main-container { 
+            padding: 25px; max-width: 1100px; margin: 0 auto; 
+            padding-bottom: 80px; transition: var(--transition); 
+        }
+        
+        /* Mobile Sidebar Overlay */
+        .overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.5); z-index: 999; display: none; backdrop-filter: blur(3px); 
+        }
+        .overlay.active { display: block; }
+
+        /* View Switching Animation */
+        .section-view { display: none; animation: fadeInUp 0.4s ease; }
+        .section-view.active { display: block; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        h2.section-title { 
+            margin-bottom: 20px; font-weight: 700; color: var(--text-main); 
+            display: flex; align-items: center; gap: 10px; font-size: 1.4rem;
+        }
+        h2.section-title::before { 
+            content: ''; width: 5px; height: 25px; background: var(--grad-main); border-radius: 10px; 
+        }
+
+        /* =========================================
+           6. DASHBOARD WIDGETS
+           ========================================= */
+        /* Profile Widget */
+        .profile-card { 
+            background: var(--bg-card); border-radius: var(--radius); overflow: hidden; 
+            box-shadow: var(--shadow-card); text-align: center; margin-bottom: 30px; 
+        }
+        .profile-bg { height: 100px; background: var(--grad-main); }
+        .profile-img-wrap { width: 100px; height: 100px; margin: -50px auto 10px; position: relative; }
+        .profile-img-main { 
+            width: 100%; height: 100%; border-radius: 50%; border: 4px solid var(--bg-card); 
+            object-fit: cover; background: #fff; 
+        }
+        .pkg-badge { 
+            background: linear-gradient(90deg, #11998e, #38ef7d); color: white; 
+            padding: 4px 15px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; 
+            display: inline-block; margin-bottom: 15px; letter-spacing: 1px;
+        }
+
+        /* Stats Grid */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { 
+            background: var(--bg-card); padding: 25px; border-radius: var(--radius); 
+            box-shadow: var(--shadow-card); position: relative; overflow: hidden; 
+            border-left: 4px solid transparent; transition: 0.3s; 
+        }
+        .stat-card:hover { transform: translateY(-5px); }
+        .stat-val { font-size: 1.8rem; font-weight: 800; margin-top: 5px; color: var(--text-main); }
+        .stat-label { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
+        .stat-icon { position: absolute; top: 20px; right: 20px; opacity: 0.1; font-size: 2.5rem; color: var(--text-main); }
+
+        .sc-orange { border-left-color: #FF512F; } .sc-orange .stat-val { color: #FF512F; }
+        .sc-blue { border-left-color: #2193b0; } .sc-blue .stat-val { color: #2193b0; }
+        .sc-green { border-left-color: #00b09b; } .sc-green .stat-val { color: #00b09b; }
+        .sc-pink { border-left-color: #DD2476; } .sc-pink .stat-val { color: #DD2476; }
+        /* ADDED PURPLE FOR 30 DAYS CARD */
+        .sc-purple { border-left-color: #5D3FD3; } .sc-purple .stat-val { color: #5D3FD3; }
+
+        /* Chart Container */
+        .chart-container {
+            background: var(--bg-card); padding: 20px; border-radius: var(--radius);
+            box-shadow: var(--shadow-card); margin-bottom: 30px; height: 350px;
+        }
+
+        /* =========================================
+           7. COMPONENTS (Forms, Tables, Etc)
+           ========================================= */
+        .form-box { background: var(--bg-card); padding: 30px; border-radius: var(--radius); box-shadow: var(--shadow-card); }
+        .form-group { margin-bottom: 20px; }
+        .form-label { display: block; font-size: 0.9rem; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; }
+        .form-input { 
+            width: 100%; padding: 12px 15px; border: 1px solid var(--border-color); 
+            border-radius: 10px; font-size: 1rem; background: var(--bg-body); color: var(--text-main);
+            transition: 0.3s; 
+        }
+        .form-input:focus { border-color: var(--primary); }
+
+        .btn { 
+            background: var(--grad-main); color: white; border: none; padding: 12px 25px; 
+            font-size: 1rem; font-weight: 600; border-radius: 10px; cursor: pointer; 
+            transition: 0.3s; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255, 81, 47, 0.3); }
+        .btn-block { width: 100%; }
+
+        /* Tables */
+        .table-container { 
+            background: var(--bg-card); border-radius: var(--radius); 
+            box-shadow: var(--shadow-card); overflow: hidden; 
+            overflow-x: auto; 
+        }
+        .custom-table { width: 100%; border-collapse: collapse; min-width: 600px; }
+        .custom-table th { background: rgba(0,0,0,0.02); padding: 15px; text-align: left; font-size: 0.85rem; color: var(--text-muted); }
+        .custom-table td { padding: 15px; border-bottom: 1px solid var(--border-color); font-size: 0.95rem; color: var(--text-main); }
+        .custom-table tr:last-child td { border-bottom: none; }
+        
+        .user-cell { display: flex; align-items: center; gap: 10px; }
+        .user-thumb { width: 35px; height: 35px; border-radius: 50%; object-fit: cover; }
+
+        /* =========================================
+           8. SPECIFIC FEATURE STYLES
+           ========================================= */
+        /* Course Card */
+        .course-card {
+            background: var(--bg-card); border-radius: 12px; overflow: hidden; box-shadow: var(--shadow-card);
+            transition: 0.3s; display: flex; flex-direction: column;
+        }
+        .course-card:hover { transform: translateY(-5px); }
+        .course-thumb { width: 100%; height: 160px; object-fit: cover; background: #eee; }
+        .course-body { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        .course-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 10px; }
+
+        /* Community Cards */
+        .comm-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; }
+        .comm-card { 
+            background: var(--bg-card); border-radius: 12px; padding: 20px; text-align: center;
+            box-shadow: var(--shadow-card); transition: 0.3s; border: 1px solid var(--border-color);
+        }
+        .comm-card:hover { transform: translateY(-5px); }
+        .comm-icon { font-size: 2.5rem; margin-bottom: 10px; }
+        .comm-btn { font-size: 0.8rem; padding: 8px 15px; width: 100%; border-radius: 20px; margin-top: 10px; }
+        
+        /* News Cards */
+        .news-item { 
+            background: var(--bg-card); border-radius: 12px; margin-bottom: 20px; overflow: hidden;
+            box-shadow: var(--shadow-card); display: flex; flex-direction: column;
+        }
+        .news-img { width: 100%; height: 200px; object-fit: cover; }
+        .news-content { padding: 20px; }
+        .news-date { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 5px; }
+        .news-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 10px; color: var(--primary); }
+
+        /* Training List */
+        .train-list { display: flex; flex-direction: column; gap: 15px; }
+        .train-card { 
+            background: var(--bg-card); padding: 15px; border-radius: 12px; box-shadow: var(--shadow-card);
+            display: flex; gap: 15px; align-items: center; border-left: 5px solid var(--primary);
+        }
+        .train-thumb { 
+            width: 120px; height: 80px; object-fit: cover; border-radius: 8px; flex-shrink: 0; background: #000;
+        }
+        .train-info h4 { font-size: 1rem; margin-bottom: 5px; }
+        .train-day { 
+            background: rgba(255, 81, 47, 0.1); color: var(--primary); 
+            padding: 2px 8px; border-radius: 5px; font-size: 0.75rem; font-weight: 700;
+        }
+
+        /* Certificate */
+        .cert-preview {
+            width: 100%; max-width: 700px; background: #333; margin: 0 auto 20px;
+            display: flex; align-items: center; justify-content: center; color: white; border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+        #certCanvas { width: 100%; height: auto; display: block; }
+
+        /* Notifications Dropdown */
+        .notif-dropdown {
+            position: absolute; top: 60px; right: 25px; width: 300px; background: var(--bg-card);
+            border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); z-index: 200;
+            display: none; border: 1px solid var(--border-color);
+        }
+        .notif-dropdown.show { display: block; animation: fadeInUp 0.2s; }
+        .notif-header { padding: 15px; border-bottom: 1px solid var(--border-color); font-weight: 700; }
+        .notif-list { max-height: 300px; overflow-y: auto; }
+        .notif-item { padding: 12px 15px; border-bottom: 1px solid var(--border-color); font-size: 0.85rem; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar { left: -100%; }
+            .sidebar.active { left: 0; }
+            .main-container { margin-left: 0; padding: 15px; padding-bottom: 80px; }
+            .menu-btn { display: block; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .train-card { flex-direction: column; align-items: flex-start; }
+            .train-thumb { width: 100%; height: 160px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- OVERLAY -->
+    <div class="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- NOTIFICATION DROPDOWN -->
+    <div class="notif-dropdown" id="notifDropdown">
+        <div class="notif-header">Notifications</div>
+        <div class="notif-list" id="notifList">
+            <div class="notif-item">No new notifications</div>
+        </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo"><i class="fas fa-rocket"></i> SkillGuru</div>
+            <i class="fas fa-times" onclick="toggleSidebar()" style="cursor:pointer; color:var(--text-muted);"></i>
+        </div>
+        
+        <div class="nav-links">
+            <div class="menu-section-label">Main</div>
+            <div class="menu-item active-link" onclick="showSection('dashboard', this)"><i class="fas fa-th-large"></i> Dashboard</div>
+            <div class="menu-item" onclick="showSection('wallet', this)"><i class="fas fa-wallet"></i> Wallet & History</div>
+            <div class="menu-item" onclick="showSection('kyc', this)"><i class="fas fa-id-card"></i> KYC Verification</div>
+
+            <div class="menu-section-label">Connect & News</div>
+            <div class="menu-item" onclick="showSection('community', this)"><i class="fas fa-globe"></i> Community</div>
+            <div class="menu-item" onclick="showSection('news', this)"><i class="fas fa-newspaper"></i> News & Updates</div>
+            <div class="menu-item" onclick="showSection('training', this)"><i class="fas fa-chalkboard-teacher"></i> Training</div>
+
+            <div class="menu-section-label">Growth</div>
+            <div class="menu-item" onclick="showSection('affiliate', this)"><i class="fas fa-link"></i> Affiliate Tools</div>
+            <div class="menu-item" onclick="showSection('team', this)"><i class="fas fa-users"></i> My Team</div>
+            <div class="menu-item" onclick="showSection('enroll', this)"><i class="fas fa-user-plus"></i> Enroll Mate</div>
+            <div class="menu-item" onclick="showSection('leaderboard', this)"><i class="fas fa-trophy"></i> Leaderboard</div>
+
+            <div class="menu-section-label">Learning</div>
+            <div class="menu-item" onclick="showSection('courses', this)"><i class="fas fa-play-circle"></i> My Courses</div>
+            <div class="menu-item" onclick="showSection('certificate', this)"><i class="fas fa-certificate"></i> Certificates</div>
+
+            <div class="menu-section-label">Support</div>
+            <div class="menu-item" onclick="showSection('support', this)"><i class="fas fa-headset"></i> Help Tickets</div>
+            <div class="menu-item" onclick="showSection('profile', this)"><i class="fas fa-user-cog"></i> Settings</div>
+            
+            <div class="menu-item" onclick="logout()" style="color:var(--danger); margin-top:20px;"><i class="fas fa-sign-out-alt"></i> Logout</div>
+        </div>
+    </aside>
+
+    <!-- HEADER -->
+    <header>
+        <div class="header-left">
+            <i class="fas fa-bars menu-btn" onclick="toggleSidebar()"></i>
+            <h3 style="margin:0; font-size:1.1rem; color:var(--text-main); display:none; @media(min-width:768px){display:block;}">Dashboard</h3>
+        </div>
+        <div class="header-right">
+            <!-- Theme Toggle -->
+            <div class="theme-toggle" onclick="toggleTheme()"><i class="fas fa-moon"></i></div>
+            
+            <!-- Notification -->
+            <div class="notif-box" onclick="toggleNotif()">
+                <i class="far fa-bell notif-icon"></i>
+                <div class="notif-badge" id="notifCount">0</div>
+            </div>
+
+            <!-- Profile -->
+            <div class="user-header-profile" onclick="showSection('profile', null)">
+                <span class="user-name-head" id="headerName">User</span>
+                <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="user-header-img" id="headerImg">
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <div class="main-container">
+
+        <!-- 1. DASHBOARD OVERVIEW -->
+        <div id="dashboard" class="section-view active">
+            <!-- Profile Summary -->
+            <div class="profile-card">
+                <div class="profile-bg"></div>
+                <div class="profile-img-wrap">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="profile-img-main" id="dashProfileImg">
+                </div>
+                <div class="user-details">
+                    <h2 id="uName">Loading...</h2>
+                    <div class="pkg-badge" id="uPkg">...</div>
+                    <p style="color:var(--text-muted); margin-bottom:20px;" id="uEmail">...</p>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card sc-orange">
+                    <div class="stat-info">
+                        <div class="stat-label">Total Earnings</div>
+                        <div class="stat-val">₹<span id="sTotal">0</span></div>
+                    </div>
+                    <i class="fas fa-chart-line stat-icon"></i>
+                </div>
+                <div class="stat-card sc-blue">
+                    <div class="stat-info">
+                        <div class="stat-label">Today's Income</div>
+                        <div class="stat-val">₹<span id="sToday">0</span></div>
+                    </div>
+                    <i class="fas fa-calendar-day stat-icon"></i>
+                </div>
+                <div class="stat-card sc-green">
+                    <div class="stat-info">
+                        <div class="stat-label">Last 7 Days</div>
+                        <div class="stat-val">₹<span id="s7Days">0</span></div>
+                    </div>
+                    <i class="fas fa-chart-bar stat-icon"></i>
+                </div>
+                <!-- ADDED: 30 DAYS CARD -->
+                <div class="stat-card sc-purple">
+                    <div class="stat-info">
+                        <div class="stat-label">Last 30 Days</div>
+                        <div class="stat-val">₹<span id="s30Days">0</span></div>
+                    </div>
+                    <i class="fas fa-calendar-alt stat-icon"></i>
+                </div>
+
+                <div class="stat-card sc-pink">
+                    <div class="stat-info">
+                        <div class="stat-label">Wallet Balance</div>
+                        <div class="stat-val">₹<span id="sWallet">0</span></div>
+                    </div>
+                    <i class="fas fa-wallet stat-icon"></i>
+                </div>
+            </div>
+
+            <!-- Chart -->
+            <h2 class="section-title">Income Analytics</h2>
+            <div class="chart-container">
+                <canvas id="earningChart"></canvas>
+            </div>
+        </div>
+
+        <!-- 2. WALLET & HISTORY -->
+        <div id="wallet" class="section-view">
+            <h2 class="section-title">Wallet & Withdraw</h2>
+            
+            <div class="form-box" style="margin-bottom:30px;">
+                <div style="text-align:center; margin-bottom:20px;">
+                    <div style="font-size:0.9rem; color:var(--text-muted);">Available Balance</div>
+                    <div style="font-size:2.5rem; font-weight:800; color:var(--primary);">₹<span id="wBal">0</span></div>
+                </div>
+                <form id="withdrawForm">
+                    <div class="form-group">
+                        <label class="form-label">Amount (Min ₹100)</label>
+                        <input type="number" id="wAmt" class="form-input" placeholder="Enter Amount" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">UPI ID / Bank Details</label>
+                        <input type="text" id="wUpi" class="form-input" placeholder="e.g. user@okhdfcbank" required>
+                    </div>
+                    <button type="submit" class="btn btn-block">Request Withdrawal</button>
+                </form>
+            </div>
+
+            <h2 class="section-title">Transaction History</h2>
+            <div class="table-container">
+                <table class="custom-table" id="txnTable">
+                    <thead><tr><th>Type</th><th>Details</th><th>Amount</th><th>Date</th><th>Status</th></tr></thead>
+                    <tbody><tr><td colspan="5" align="center">Loading...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 3. KYC VERIFICATION -->
+        <div id="kyc" class="section-view">
+            <h2 class="section-title">KYC Verification</h2>
+            <div class="form-box">
+                <div id="kycStatusBox" class="kyc-status-box kyc-pending" style="display:none;">KYC Status: Pending</div>
+                
+                <p style="margin-bottom:20px; color:var(--text-muted);">To receive payouts, you must verify your identity. Upload Aadhaar/PAN card.</p>
+                
+                <form id="kycForm">
+                    <div class="form-group">
+                        <label class="form-label">Full Name (As on ID)</label>
+                        <input type="text" id="kycName" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">ID Number (Aadhaar/PAN)</label>
+                        <input type="text" id="kycNum" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Upload ID Photo</label>
+                        <input type="file" id="kycFile" class="form-input" accept="image/*" required>
+                    </div>
+                    <button type="submit" class="btn btn-block">Submit for Verification</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- 4. COMMUNITY -->
+        <div id="community" class="section-view">
+            <h2 class="section-title">Join Our Community</h2>
+            <div class="comm-grid">
+                <!-- WhatsApp Group -->
+                <div class="comm-card">
+                    <i class="fab fa-whatsapp comm-icon" style="color:#25D366;"></i>
+                    <h4>WhatsApp Group</h4>
+                    <a href="#" target="_blank" id="lnk-wa-grp" class="btn comm-btn" style="background:#25D366;">Join Now</a>
+                </div>
+                <!-- Telegram Group -->
+                <div class="comm-card">
+                    <i class="fab fa-telegram comm-icon" style="color:#0088cc;"></i>
+                    <h4>Telegram Group</h4>
+                    <a href="#" target="_blank" id="lnk-tg-grp" class="btn comm-btn" style="background:#0088cc;">Join Now</a>
+                </div>
+                <!-- Instagram -->
+                <div class="comm-card">
+                    <i class="fab fa-instagram comm-icon" style="color:#C13584;"></i>
+                    <h4>Instagram</h4>
+                    <a href="#" target="_blank" id="lnk-insta" class="btn comm-btn" style="background:linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);">Follow</a>
+                </div>
+                <!-- YouTube -->
+                <div class="comm-card">
+                    <i class="fab fa-youtube comm-icon" style="color:#FF0000;"></i>
+                    <h4>YouTube</h4>
+                    <a href="#" target="_blank" id="lnk-yt" class="btn comm-btn" style="background:#FF0000;">Subscribe</a>
+                </div>
+                <!-- WhatsApp Support -->
+                <div class="comm-card">
+                    <i class="fas fa-headset comm-icon" style="color:#25D366;"></i>
+                    <h4>WhatsApp Support</h4>
+                    <a href="#" target="_blank" id="lnk-wa-num" class="btn comm-btn" style="background:#128c7e;">Chat Now</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. NEWS -->
+        <div id="news" class="section-view">
+            <h2 class="section-title">Latest News</h2>
+            <div id="newsContainer">
+                <!-- JS populated -->
+                <div style="text-align:center; padding:20px; color:var(--text-muted);">Loading News...</div>
+            </div>
+        </div>
+
+        <!-- 6. TRAINING -->
+        <div id="training" class="section-view">
+            <h2 class="section-title">Training Series</h2>
+            <div class="train-list" id="trainingList">
+                <!-- JS Populated -->
+            </div>
+        </div>
+
+        <!-- 7. AFFILIATE TOOLS -->
+        <div id="affiliate" class="section-view">
+            <h2 class="section-title">Affiliate Tools</h2>
+            <div class="form-box" style="text-align:center;">
+                <h3 style="margin-bottom:15px;">Your Referral Code</h3>
+                <div style="background:#f0f2f5; padding:15px; font-size:2rem; font-weight:800; color:var(--primary); border:2px dashed #ccc; border-radius:10px; margin-bottom:20px;" id="displayCode">...</div>
+                
+                <button class="btn" onclick="copyCode()"><i class="fas fa-copy"></i> Copy Code</button>
+                <input type="text" id="hiddenCopy" style="position:absolute; left:-9999px;">
+                
+                <p style="margin-top:20px; color:var(--text-muted); font-size:0.9rem;">Share this code. When someone registers using it, you earn commission.</p>
+            </div>
+        </div>
+
+        <!-- 8. TEAM (MLM Structure) -->
+        <div id="team" class="section-view">
+            <h2 class="section-title">My Team (Network)</h2>
+            <div class="table-container">
+                <table class="custom-table" id="teamTable">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Level</th>
+                            <th>Package</th>
+                            <th>Joined On</th>
+                        </tr>
+                    </thead>
+                    <tbody><tr><td colspan="4" align="center">Loading Network...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 9. ENROLL MATE (Manual Reg & Payment) -->
+        <div id="enroll" class="section-view">
+            <h2 class="section-title">Enroll New Member</h2>
+            <div class="form-box">
+                <p style="margin-bottom:20px; color:var(--text-muted);">Register a user manually. You will be redirected to payment after details.</p>
+                <form id="manualRegForm">
+                    <div class="form-group"><label class="form-label">Full Name</label><input type="text" id="mName" class="form-input" required></div>
+                    <div class="form-group"><label class="form-label">Email Address</label><input type="email" id="mEmail" class="form-input" required></div>
+                    <div class="form-group"><label class="form-label">Mobile Number</label><input type="number" id="mMobile" class="form-input" required></div>
+                    <div class="form-group"><label class="form-label">Create Password</label><input type="text" id="mPass" class="form-input" required></div>
+                    <div class="form-group">
+                        <label class="form-label">Select Package</label>
+                        <select id="mPackage" class="form-input" required>
+                            <option value="">Loading Packages...</option>
+                        </select>
+                    </div>
+                    <!-- Hidden price field populated by JS -->
+                    <input type="hidden" id="mPrice">
+                    
+                    <button type="submit" class="btn btn-block">Proceed to Payment</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- 10. LEADERBOARD (Demo Data) -->
+        <div id="leaderboard" class="section-view">
+            <h2 class="section-title">Top 10 Earners (All Time)</h2>
+            <div class="table-container">
+                <table class="custom-table" id="leaderTable">
+                    <thead><tr><th>Rank</th><th>Achiever</th><th>Total Income</th></tr></thead>
+                    <tbody><!-- JS Populated --></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 11. COURSES -->
+        <div id="courses" class="section-view">
+            <h2 class="section-title">My Courses</h2>
+            <div id="courseList" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:25px;">
+                <!-- JS Populated -->
+            </div>
+        </div>
+
+        <!-- 12. CERTIFICATES -->
+        <div id="certificate" class="section-view">
+            <h2 class="section-title">Course Certificates</h2>
+            <div class="form-box" style="text-align:center;">
+                <p style="margin-bottom:20px;">Download your completion certificate with authorized signature.</p>
+                <div class="cert-preview">
+                    <canvas id="certCanvas" width="800" height="600"></canvas>
+                </div>
+                <button class="btn" onclick="downloadCert()"><i class="fas fa-download"></i> Download Certificate</button>
+            </div>
+        </div>
+
+        <!-- 13. SUPPORT TICKETS -->
+        <div id="support" class="section-view">
+            <h2 class="section-title">Help & Support</h2>
+            <div class="form-box">
+                <h3>Create New Ticket</h3>
+                <form id="ticketForm" style="margin-top:15px;">
+                    <div class="form-group">
+                        <label class="form-label">Subject</label>
+                        <input type="text" id="tSubject" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Message</label>
+                        <textarea id="tMsg" class="form-input" rows="4" required></textarea>
+                    </div>
+                    <button type="submit" class="btn">Submit Ticket</button>
+                </form>
+            </div>
+            <h3 style="margin-top:30px;">My Tickets</h3>
+            <div class="table-container" style="margin-top:15px;">
+                <table class="custom-table" id="ticketTable">
+                    <thead><tr><th>ID</th><th>Subject</th><th>Status</th></tr></thead>
+                    <tbody><tr><td colspan="3">No tickets found</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 14. PROFILE SETTINGS -->
+        <div id="profile" class="section-view">
+            <h2 class="section-title">Settings</h2>
+            <div class="form-box">
+                <h3>Personal Details</h3>
+                <div class="form-group" style="margin-top:15px;">
+                    <label class="form-label">Profile Picture</label>
+                    <input type="file" id="pUpload" class="form-input" accept="image/*">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" id="pNameEdit" class="form-input">
+                </div>
+                <button class="btn" onclick="updateProfile()">Save Details</button>
+                
+                <hr style="margin:25px 0; border:0; border-top:1px solid var(--border-color);">
+                
+                <h3>Change Password</h3>
+                <div class="form-group" style="margin-top:15px;">
+                    <input type="password" id="newPass" class="form-input" placeholder="New Password">
+                </div>
+                <button class="btn" style="background:var(--text-main);" onclick="changePass()">Update Password</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- FIREBASE SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+
+    <script>
+        // ==========================================
+        // 1. CONFIGURATION
+        // ==========================================
+        const firebaseConfig = {
+    apiKey: "AIzaSyBSUjAVEj0u85ul27JzRGVhEaT4SIBDRjk",
+    authDomain: "wrok-skillguru.firebaseapp.com",
+    databaseURL: "https://wrok-skillguru-default-rtdb.firebaseio.com",
+    projectId: "wrok-skillguru",
+    storageBucket: "wrok-skillguru.firebasestorage.app",
+    messagingSenderId: "636485224747",
+    appId: "1:636485224747:web:f3865040f4dd7e1d2a9d6e"
+  };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        const auth = firebase.auth();
+
+        let currentUser = null;
+        let userData = null;
+        let myWallet = 0;
+        let earningsChart = null;
+
+        // ==========================================
+        // 2. AUTH & INIT (FIXED LOGIC)
+        // ==========================================
+        
+        // FIX: FORCE PERSISTENCE TO LOCAL
+        // This ensures that refreshing the page doesn't kick the user out.
+        auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+            .then(() => {
+                // Persistence is now enabled
+            })
+            .catch((error) => {
+                console.error("Auth Persistence Error:", error);
+            });
+
+        auth.onAuthStateChanged(user => {
+            if(user) {
+                console.log("User detected:", user.uid);
+                currentUser = user;
+                initDashboard(user.uid);
+            } else {
+                console.warn("No user detected. Redirecting to login.");
+                // Ensure we don't redirect if the page is just loading script (handled by observer)
+                // If you are opening via file://, user will always be null.
+                if (window.location.protocol === 'file:') {
+                    console.error("FIREBASE AUTH ERROR: You are opening this file directly (file://). Firebase Auth requires a server (http:// or https://). Please use VS Code 'Live Server' extension.");
+                }
+                window.location.href = 'index.html';
+            }
+        });
+
+        function initDashboard(uid) {
+            loadUserProfile(uid);
+            loadEarnings(uid);
+            loadKYC(uid);
+            loadPackagesForForm();
+            loadTeamMLM(uid);       
+            loadLeaderboardDemo();  
+            loadCoursesReal();      
+            loadTickets(uid);
+            
+            // NEW FEATURES
+            loadCommunity();
+            loadNews();
+            loadTraining();
+        }
+
+        // ==========================================
+        // 3. CORE DATA LOGIC
+        // ==========================================
+        function loadUserProfile(uid) {
+            db.ref('users/' + uid).on('value', snap => {
+                userData = snap.val();
+                if(!userData) return;
+
+                // UI Updates
+                document.getElementById('uName').innerText = userData.name;
+                document.getElementById('headerName').innerText = userData.name.split(' ')[0];
+                document.getElementById('uEmail').innerText = userData.email;
+                document.getElementById('uPkg').innerText = (userData.package || 'Starter') + ' Plan';
+                
+                document.getElementById('pNameEdit').value = userData.name; // Fill Setting Input
+                
+                if(userData.profilePic) {
+                    document.getElementById('headerImg').src = userData.profilePic;
+                    document.getElementById('dashProfileImg').src = userData.profilePic;
+                }
+
+                // Wallet
+                myWallet = userData.walletBalance || 0;
+                document.getElementById('sWallet').innerText = myWallet;
+                document.getElementById('wBal').innerText = myWallet;
+
+                // Affiliate Code
+                const code = userData.username;
+                document.getElementById('displayCode').innerText = code;
+                document.getElementById('hiddenCopy').value = code;
+
+                // Render Cert Name
+                renderCertificate(userData.name);
+            });
+        }
+
+        function loadEarnings(uid) {
+            db.ref('earnings/' + uid).on('value', snap => {
+                let total = 0, today = 0, last7 = 0, last30 = 0; // Added last30
+                const txns = [];
+                const chartData = {}; 
+
+                if(snap.exists()) {
+                    const now = new Date();
+                    snap.forEach(c => {
+                        const t = c.val();
+                        const amt = parseFloat(t.amount);
+                        const d = new Date(t.date);
+                        
+                        total += amt;
+                        // Today
+                        if(d.toDateString() === now.toDateString()) today += amt;
+                        // 7 Days
+                        if((now - d) < (7 * 24 * 60 * 60 * 1000)) last7 += amt;
+                        // 30 Days (NEW LOGIC)
+                        if((now - d) < (30 * 24 * 60 * 60 * 1000)) last30 += amt;
+
+                        txns.push(t);
+                        const dateKey = d.toLocaleDateString();
+                        chartData[dateKey] = (chartData[dateKey] || 0) + amt;
+                    });
+                }
+
+                document.getElementById('sTotal').innerText = total;
+                document.getElementById('sToday').innerText = today;
+                document.getElementById('s7Days').innerText = last7;
+                document.getElementById('s30Days').innerText = last30; // Update 30 Days UI
+
+                updateTxnTable(txns);
+                updateChart(chartData);
+            });
+        }
+
+        function updateTxnTable(txns) {
+            const tb = document.getElementById('txnTable').querySelector('tbody');
+            tb.innerHTML = '';
+            txns.sort((a,b) => new Date(b.date) - new Date(a.date));
+            
+            if(txns.length === 0) {
+                tb.innerHTML = '<tr><td colspan="5" align="center">No transactions yet</td></tr>';
+                return;
+            }
+
+            txns.slice(0, 10).forEach(t => {
+                tb.innerHTML += `
+                    <tr>
+                        <td><span style="color:${t.type.includes('Active')?'green':'orange'}; font-weight:600;">${t.type}</span></td>
+                        <td>From: ...${t.fromUser ? t.fromUser.slice(-4) : 'System'}</td>
+                        <td style="font-weight:bold;">₹${t.amount}</td>
+                        <td>${new Date(t.date).toLocaleDateString()}</td>
+                        <td><span style="background:#dcfce7; color:green; padding:3px 8px; border-radius:5px; font-size:0.8rem;">Success</span></td>
+                    </tr>
+                `;
+            });
+        }
+
+        function updateChart(dataObj) {
+            const ctx = document.getElementById('earningChart').getContext('2d');
+            const labels = Object.keys(dataObj).slice(-7); 
+            const data = Object.values(dataObj).slice(-7);
+
+            if(earningsChart) earningsChart.destroy();
+
+            earningsChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Daily Income (₹)',
+                        data: data,
+                        borderColor: '#FF512F',
+                        backgroundColor: 'rgba(255, 81, 47, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+        }
+
+        // ==========================================
+        // 4. NEW FEATURE: COMMUNITY
+        // ==========================================
+        function loadCommunity() {
+            // Assumes Admin saves links at 'settings/community'
+            db.ref('settings/community').on('value', snap => {
+                const links = snap.val() || {};
+                
+                // Update hrefs if data exists, else fallback to '#'
+                document.getElementById('lnk-wa-grp').href = links.whatsappGroup || '#';
+                document.getElementById('lnk-tg-grp').href = links.telegram || '#';
+                document.getElementById('lnk-insta').href = links.instagram || '#';
+                document.getElementById('lnk-yt').href = links.youtube || '#';
+                
+                // For WhatsApp number, format it into a link
+                if(links.whatsappNumber) {
+                     document.getElementById('lnk-wa-num').href = `https://wa.me/${links.whatsappNumber}`;
+                }
+            });
+        }
+
+        // ==========================================
+        // 5. NEW FEATURE: NEWS
+        // ==========================================
+        function loadNews() {
+            db.ref('news').on('value', snap => {
+                const container = document.getElementById('newsContainer');
+                container.innerHTML = '';
+                
+                if(snap.exists()) {
+                    snap.forEach(c => {
+                        const n = c.val();
+                        // Handle missing image
+                        const img = n.image || 'https://via.placeholder.com/600x300?text=News+Update';
+                        
+                        container.innerHTML += `
+                            <div class="news-item">
+                                <img src="${img}" class="news-img">
+                                <div class="news-content">
+                                    <div class="news-date">${new Date(n.date).toLocaleDateString()}</div>
+                                    <div class="news-title">${n.headline}</div>
+                                    <div style="font-size:0.9rem; color:var(--text-muted); line-height:1.6;">
+                                        ${n.content}
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    container.innerHTML = '<div style="text-align:center; padding:30px;">No news available at the moment.</div>';
+                }
+            });
+        }
+
+        // ==========================================
+        // 6. NEW FEATURE: TRAINING (Specific List)
+        // ==========================================
+        function loadTraining() {
+            // Hardcoded specific list
+            const videos = [
+                { day: "Day 1", title: "How To Optimise Instagram Profile", url: "https://youtu.be/wpb1vpV5Fbw?si=nKpNM9gFr89EkvXS", id: "wpb1vpV5Fbw" },
+                { day: "Day 2", title: "How to Generate Leads Using Instagram Free", url: "https://youtu.be/KBSTrT7BjW4?si=Bp7rcecmnH1pUoDj", id: "KBSTrT7BjW4" },
+                { day: "Day 3", title: "How Follow Up For Earning", url: "https://youtu.be/Bjvkc7MkWYc?si=IjdIiq_AKellIU0-", id: "Bjvkc7MkWYc" },
+                { day: "Day 4", title: "How To Earn Using Chat", url: "https://youtu.be/GM0aZjlis9U?si=K9K55yJASu644YF9", id: "GM0aZjlis9U" },
+                { day: "Day 5", title: "How to Talk In Call", url: "https://youtu.be/fRL_bXhph-A?si=EdtAfPAXzzyZMx-C", id: "fRL_bXhph-A" },
+                { day: "Day 6", title: "How To Create Perfect Facebook Ads", url: "https://youtu.be/bV7NrQI0ZYM?si=lnHvVFWHhupESsfl", id: "bV7NrQI0ZYM" }
+            ];
+
+            const container = document.getElementById('trainingList');
+            container.innerHTML = '';
+
+            videos.forEach(v => {
+                // Generate Thumbnail from ID
+                const thumbUrl = `https://img.youtube.com/vi/${v.id}/mqdefault.jpg`;
+                
+                container.innerHTML += `
+                    <div class="train-card">
+                        <img src="${thumbUrl}" class="train-thumb" alt="Video Thumb">
+                        <div class="train-info" style="flex:1;">
+                            <span class="train-day">${v.day}</span>
+                            <h4>${v.title}</h4>
+                            <div style="font-size:0.8rem; color:var(--text-muted);">Watch this training to master the skill.</div>
+                        </div>
+                        <a href="${v.url}" target="_blank" class="btn" style="padding:8px 20px; font-size:0.9rem;"><i class="fas fa-play"></i> Watch</a>
+                    </div>
+                `;
+            });
+        }
+
+        // ==========================================
+        // 7. MY TEAM (MLM Structure)
+        // ==========================================
+        function loadTeamMLM(uid) {
+            db.ref('users/' + uid).once('value', userSnap => {
+                const myUsername = userSnap.val().username;
+                
+                db.ref('users').once('value', allSnap => {
+                    const allUsers = [];
+                    allSnap.forEach(c => allUsers.push(c.val()));
+                    
+                    const tb = document.getElementById('teamTable').querySelector('tbody');
+                    tb.innerHTML = '';
+
+                    const level1 = allUsers.filter(u => u.referrer === myUsername);
+                    
+                    if(level1.length === 0) {
+                        tb.innerHTML = '<tr><td colspan="4" align="center">No team members yet.</td></tr>';
+                        return;
+                    }
+
+                    let displayHtml = '';
+                    level1.forEach(l1 => {
+                        displayHtml += `
+                            <tr style="background:rgba(255, 81, 47, 0.03);">
+                                <td>
+                                    <div class="user-cell">
+                                        <img src="${l1.profilePic || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'}" class="user-thumb">
+                                        <div>
+                                            <div style="font-weight:600;">${l1.name}</div>
+                                            <div style="font-size:0.75rem; color:var(--text-muted);">${l1.email}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span style="color:var(--primary); font-weight:bold;">Direct (L1)</span></td>
+                                <td>${l1.package || 'Starter'}</td>
+                                <td>${new Date(l1.joinedAt).toLocaleDateString()}</td>
+                            </tr>
+                        `;
+
+                        const level2 = allUsers.filter(u => u.referrer === l1.username);
+                        level2.forEach(l2 => {
+                            displayHtml += `
+                                <tr>
+                                    <td>
+                                        <div class="user-cell" style="padding-left:20px;">
+                                            <i class="fas fa-level-up-alt fa-rotate-90" style="color:var(--text-muted); margin-right:5px;"></i>
+                                            <img src="${l2.profilePic || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'}" class="user-thumb">
+                                            <div>
+                                                <div style="font-weight:500;">${l2.name}</div>
+                                                <div style="font-size:0.75rem; color:var(--text-muted);">${l2.email}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><span style="color:var(--secondary); font-size:0.9rem;">Team (L2)</span></td>
+                                    <td>${l2.package || 'Starter'}</td>
+                                    <td>${new Date(l2.joinedAt).toLocaleDateString()}</td>
+                                </tr>
+                            `;
+                        });
+                    });
+
+                    tb.innerHTML = displayHtml;
+                });
+            });
+        }
+
+        // ==========================================
+        // 8. ENROLL MATE
+        // ==========================================
+        function loadPackagesForForm() {
+            const s = document.getElementById('mPackage');
+            db.ref('packages').once('value', snap => {
+                s.innerHTML = '<option value="">Select Package</option>';
+                if(snap.exists()){
+                    snap.forEach(c => {
+                        const p = c.val();
+                        s.innerHTML += `<option value="${p.title}" data-price="${p.price}">${p.title} - ₹${p.price}</option>`;
+                    });
+                }
+            });
+            s.addEventListener('change', function() {
+                const opt = this.options[this.selectedIndex];
+                if(opt.value) {
+                    document.getElementById('mPrice').value = opt.getAttribute('data-price');
+                }
+            });
+        }
+
+        document.getElementById('manualRegForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const price = document.getElementById('mPrice').value;
+            const pkg = document.getElementById('mPackage').value;
+            
+            if(!pkg) return Swal.fire('Error', 'Please select a package', 'error');
+
+            Swal.fire({
+                title: 'Processing...',
+                text: 'Redirecting to Payment Gateway',
+                icon: 'info',
+                timer: 2000,
+                showConfirmButton: false
+            }).then(() => {
+                Swal.fire('Simulated', `Redirected to pay ₹${price}`, 'success');
+            });
+        });
+
+        // ==========================================
+        // 9. LEADERBOARD (Demo)
+        // ==========================================
+        function loadLeaderboardDemo() {
+            const demoData = [
+                { name: "Rahul Sharma", income: "12,50,000", img: "https://randomuser.me/api/portraits/men/32.jpg" },
+                { name: "Priya Patel", income: "10,25,000", img: "https://randomuser.me/api/portraits/women/44.jpg" },
+                { name: "Amit Verma", income: "9,80,000", img: "https://randomuser.me/api/portraits/men/45.jpg" },
+                { name: "Sneha Gupta", income: "8,50,500", img: "https://randomuser.me/api/portraits/women/68.jpg" },
+                { name: "Vikram Singh", income: "7,20,000", img: "https://randomuser.me/api/portraits/men/22.jpg" },
+                { name: "Anjali Rao", income: "6,90,000", img: "https://randomuser.me/api/portraits/women/33.jpg" },
+                { name: "Rohit Kumar", income: "5,45,000", img: "https://randomuser.me/api/portraits/men/54.jpg" },
+                { name: "Neha Dubey", income: "4,30,000", img: "https://randomuser.me/api/portraits/women/21.jpg" },
+                { name: "Arjun Das", income: "3,15,000", img: "https://randomuser.me/api/portraits/men/11.jpg" },
+                { name: "Kavita Nair", income: "2,50,000", img: "https://randomuser.me/api/portraits/women/10.jpg" }
+            ];
+
+            const tb = document.getElementById('leaderTable').querySelector('tbody');
+            tb.innerHTML = '';
+
+            demoData.forEach((u, i) => {
+                let medal = '';
+                if(i===0) medal = '🥇';
+                if(i===1) medal = '🥈';
+                if(i===2) medal = '🥉';
+
+                tb.innerHTML += `
+                    <tr>
+                        <td style="font-weight:bold;">${medal} #${i+1}</td>
+                        <td>
+                            <div class="user-cell">
+                                <img src="${u.img}" class="user-thumb" style="border:2px solid ${i<3?'var(--primary)':'transparent'}">
+                                <span style="font-weight:600;">${u.name}</span>
+                            </div>
+                        </td>
+                        <td style="color:var(--success); font-weight:800;">₹${u.income}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        // ==========================================
+        // 10. COURSES (FIXED: Real DB Fetch Only)
+        // ==========================================
+        function loadCoursesReal() {
+            const container = document.getElementById('courseList');
+            // Remove any demo content immediately
+            container.innerHTML = ''; 
+            
+            db.ref('courses').on('value', snap => {
+                container.innerHTML = ''; // Clear again before appending new data
+                if(snap.exists()) {
+                    snap.forEach(c => {
+                        const course = c.val();
+                        const thumb = course.thumbnail || 'https://via.placeholder.com/300x160?text=Course';
+                        container.innerHTML += `
+                            <div class="course-card">
+                                <img src="${thumb}" class="course-thumb">
+                                <div class="course-body">
+                                    <div class="course-title">${course.title}</div>
+                                    <a href="${course.videoUrl}" target="_blank" class="btn btn-block"><i class="fas fa-play"></i> Watch Now</a>
+                                </div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    container.innerHTML = '<p style="color:var(--text-muted); grid-column:1/-1; text-align:center;">No courses have been added by the admin yet.</p>';
+                }
+            });
+        }
+
+        // ==========================================
+        // 11. CERTIFICATES (FIXED: Purple Template)
+        // ==========================================
+        function renderCertificate(name) {
+            const canvas = document.getElementById('certCanvas');
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+            
+            // Clear Canvas
+            ctx.clearRect(0, 0, width, height);
+            
+            // 1. White Background
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(0, 0, width, height);
+            
+            // 2. Decorative Top-Left Corner (Purple Accents)
+            ctx.fillStyle = "#5D3FD3"; // Main Purple
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(160, 0);
+            ctx.lineTo(0, 160);
+            ctx.fill();
+
+            // Small decorative squares
+            ctx.fillStyle = "#FFFFFF";
+            ctx.fillRect(10, 10, 15, 15);
+            ctx.fillRect(30, 10, 15, 15);
+            ctx.fillRect(10, 30, 15, 15);
+
+            // 3. Bottom-Right Corner Accent
+            ctx.fillStyle = "#5D3FD3"; 
+            ctx.beginPath();
+            ctx.moveTo(width, height);
+            ctx.lineTo(width - 120, height);
+            ctx.lineTo(width, height - 120);
+            ctx.fill();
+
+            // 4. Header Text
+            ctx.fillStyle = "#333";
+            ctx.font = "bold 32px Poppins";
+            ctx.textAlign = "center";
+            ctx.fillText("Certificate of Completion", width / 2, 100);
+            
+            // 5. "This acknowledges that"
+            ctx.font = "16px Poppins";
+            ctx.fillStyle = "#666";
+            ctx.fillText("This certificate acknowledges that", width / 2, 150);
+
+            // 6. Recipient Name (Dynamic)
+            ctx.fillStyle = "#000";
+            ctx.font = "bold 44px Poppins";
+            ctx.fillText(name, width / 2, 220);
+            
+            // Underline for name
+            ctx.beginPath();
+            ctx.moveTo(width/2 - 200, 235);
+            ctx.lineTo(width/2 + 200, 235);
+            ctx.strokeStyle = "#5D3FD3";
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // 7. Body Text
+            ctx.fillStyle = "#555";
+            ctx.font = "18px Poppins";
+            ctx.fillText("Has successfully completed the", width / 2, 280);
+            
+            ctx.fillStyle = "#5D3FD3"; // Purple for Course Name
+            ctx.font = "bold 24px Poppins";
+            ctx.fillText("SKILLGURU AFFILIATE MASTERY", width / 2, 320);
+
+            ctx.fillStyle = "#666";
+            ctx.font = "14px Poppins";
+            ctx.fillText("Ensuring expertise in digital marketing and affiliate strategies.", width / 2, 350);
+
+            // 8. Date of Issuance
+            const date = new Date().toLocaleDateString();
+            ctx.fillStyle = "#333";
+            ctx.font = "14px Poppins";
+            ctx.fillText("Date of Issuance: " + date, width / 2, 400);
+
+            // 9. Footer - Signature (Mahendra)
+            ctx.textAlign = "left";
+            
+            // Signature Line
+            ctx.beginPath();
+            ctx.moveTo(100, 500);
+            ctx.lineTo(300, 500);
+            ctx.strokeStyle = "#ccc";
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            // Signature Text (Simulating Handwriting)
+            ctx.font = "40px 'Herr Von Muellerhoff', cursive"; 
+            ctx.fillStyle = "#5D3FD3";
+            ctx.fillText("Mahendra", 140, 490); 
+            
+            ctx.font = "14px Poppins";
+            ctx.fillStyle = "#333";
+            ctx.fillText("Mahendra, Director", 130, 520);
+
+            // 10. Footer - Badge (Bottom Right)
+            // Draw a seal circle
+            ctx.beginPath();
+            ctx.arc(680, 480, 45, 0, 2 * Math.PI);
+            ctx.fillStyle = "#5D3FD3";
+            ctx.fill();
+            
+            // Seal inner ring
+            ctx.beginPath();
+            ctx.arc(680, 480, 40, 0, 2 * Math.PI);
+            ctx.strokeStyle = "#fff";
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            ctx.fillStyle = "#fff";
+            ctx.textAlign = "center";
+            ctx.font = "bold 14px Poppins";
+            ctx.fillText("VERIFIED", 680, 485);
+        }
+
+        function downloadCert() {
+            const link = document.createElement('a');
+            link.download = 'SkillGuru_Certificate.png';
+            link.href = document.getElementById('certCanvas').toDataURL();
+            link.click();
+        }
+
+        // ==========================================
+        // 11. SETTINGS & SUPPORT
+        // ==========================================
+        function updateProfile() {
+            const newName = document.getElementById('pNameEdit').value;
+            const file = document.getElementById('pUpload').files[0];
+            const updates = {};
+            if(newName) updates.name = newName;
+            
+            if(file) {
+                const r = new FileReader();
+                r.onload = ev => {
+                    updates.profilePic = ev.target.result;
+                    db.ref('users/' + currentUser.uid).update(updates).then(() => Swal.fire('Success', 'Profile Updated', 'success'));
+                };
+                r.readAsDataURL(file);
+            } else if(newName) {
+                db.ref('users/' + currentUser.uid).update(updates).then(() => Swal.fire('Success', 'Profile Updated', 'success'));
+            }
+        }
+
+        function changePass() {
+            const p = document.getElementById('newPass').value;
+            if(!p) return;
+            currentUser.updatePassword(p).then(() => Swal.fire('Success', 'Password changed', 'success')).catch(err => Swal.fire('Error', err.message, 'error'));
+        }
+
+        document.getElementById('ticketForm').addEventListener('submit', e => {
+            e.preventDefault();
+            db.ref('tickets').push({
+                userId: currentUser.uid, userName: userData.name, subject: document.getElementById('tSubject').value, message: document.getElementById('tMsg').value, status: 'Open', date: new Date().toISOString()
+            }).then(() => { Swal.fire('Sent', 'Support Ticket Created', 'success'); document.getElementById('ticketForm').reset(); });
+        });
+
+        function loadTickets(uid) {
+            db.ref('tickets').orderByChild('userId').equalTo(uid).on('value', snap => {
+                const tb = document.getElementById('ticketTable').querySelector('tbody');
+                tb.innerHTML = '';
+                if(snap.exists()) {
+                    snap.forEach(c => {
+                        const t = c.val();
+                        let badgeColor = t.status === 'Open' ? 'orange' : 'green';
+                        tb.innerHTML += `<tr><td>#${c.key.slice(-4)}</td><td>${t.subject}</td><td><span style="background:${badgeColor}; color:white; padding:2px 8px; border-radius:4px; font-size:0.8rem;">${t.status}</span></td></tr>`;
+                    });
+                } else tb.innerHTML = '<tr><td colspan="3" align="center">No tickets found</td></tr>';
+            });
+        }
+
+        document.getElementById('withdrawForm').addEventListener('submit', e => {
+            e.preventDefault();
+            const amt = parseFloat(document.getElementById('wAmt').value);
+            const upi = document.getElementById('wUpi').value;
+            if(amt > myWallet) return Swal.fire('Error', 'Insufficient Balance', 'error');
+            if(amt < 100) return Swal.fire('Error', 'Minimum withdrawal is ₹100', 'warning');
+
+            db.ref('withdraw').push({ userId: currentUser.uid, userName: userData.name, amount: amt, details: upi, status: 'Pending', date: new Date().toISOString() });
+            db.ref('users/'+currentUser.uid).update({walletBalance: myWallet - amt});
+            Swal.fire('Success', 'Request Sent', 'success');
+            document.getElementById('withdrawForm').reset();
+        });
+
+        document.getElementById('kycForm').addEventListener('submit', e => {
+            e.preventDefault();
+            const file = document.getElementById('kycFile').files[0];
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = ev => {
+                    db.ref('kyc/' + currentUser.uid).set({ name: document.getElementById('kycName').value, number: document.getElementById('kycNum').value, image: ev.target.result, status: 'Pending', userId: currentUser.uid, date: new Date().toISOString() }).then(() => Swal.fire('Submitted', 'KYC under review', 'success'));
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function loadKYC(uid) {
+            db.ref('kyc/' + uid).on('value', snap => {
+                const box = document.getElementById('kycStatusBox');
+                const form = document.getElementById('kycForm');
+                if(snap.exists()) {
+                    const k = snap.val();
+                    box.style.display = 'block';
+                    box.innerText = `KYC Status: ${k.status}`;
+                    if(k.status === 'Verified') { box.className = 'kyc-status-box kyc-verified'; form.style.display = 'none'; }
+                    else if (k.status === 'Rejected') { box.className = 'kyc-status-box kyc-rejected'; form.style.display = 'block'; }
+                    else { box.className = 'kyc-status-box kyc-pending'; form.style.display = 'none'; }
+                }
+            });
+        }
+
+        // ==========================================
+        // 12. UI HELPERS
+        // ==========================================
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.querySelector('.overlay').classList.toggle('active');
+        }
+
+        function showSection(id, el) {
+            document.querySelectorAll('.section-view').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            if(el) {
+                document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active-link'));
+                el.classList.add('active-link');
+            }
+            if(window.innerWidth < 768) {
+                document.getElementById('sidebar').classList.remove('active');
+                document.querySelector('.overlay').classList.remove('active');
+            }
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            body.getAttribute('data-theme') === 'dark' ? body.removeAttribute('data-theme') : body.setAttribute('data-theme', 'dark');
+        }
+
+        function toggleNotif() {
+            document.getElementById('notifDropdown').classList.toggle('show');
+        }
+
+        function copyCode() {
+            const copyText = document.getElementById("hiddenCopy");
+            copyText.select();
+            navigator.clipboard.writeText(copyText.value);
+            Swal.fire({toast:true, position:'top-end', icon:'success', title:'Copied', showConfirmButton:false, timer:1500});
+        }
+
+        function logout() {
+            auth.signOut().then(() => window.location.href = 'index.html');
+        }
+    </script>
+</body>
+</html>

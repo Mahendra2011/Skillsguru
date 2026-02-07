@@ -1,0 +1,1576 @@
+<!-- --- START OF FILE admin-dashboard.html --- -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Master Admin Panel | SkillGuru</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- SweetAlert2 (Professional Popups) -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        /* =================================================================================
+           1. RESET & VARIABLES
+           ================================================================================= */
+        :root {
+            --primary: #4F46E5;
+            --primary-dark: #4338ca;
+            --secondary: #64748b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --white: #ffffff;
+            --sidebar-width: 280px;
+            --header-height: 70px;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --radius: 12px;
+            --font-main: 'Inter', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; text-decoration: none; list-style: none; }
+        
+        body {
+            font-family: var(--font-main);
+            background-color: #f1f5f9;
+            color: var(--dark);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* =================================================================================
+           2. LOGIN PAGE STYLES
+           ================================================================================= */
+        #login-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #f1f5f9;
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .login-box {
+            background: var(--white);
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .login-logo { font-size: 3rem; color: var(--primary); margin-bottom: 10px; }
+        .login-title { font-size: 1.5rem; font-weight: 800; color: var(--dark); margin-bottom: 5px; }
+        .login-subtitle { color: #64748b; font-size: 0.9rem; margin-bottom: 30px; }
+
+        /* =================================================================================
+           3. SIDEBAR STYLES
+           ================================================================================= */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--white);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            border-right: 1px solid #e2e8f0;
+            z-index: 50;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand-box {
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
+            padding: 0 25px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .brand-logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-scroller {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 15px;
+        }
+        
+        .menu-category {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #94a3b8;
+            font-weight: 700;
+            margin: 20px 15px 10px;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            color: #64748b;
+            font-weight: 500;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 5px;
+            font-size: 0.95rem;
+        }
+
+        .nav-item:hover { background-color: #f1f5f9; color: var(--primary); }
+        .nav-item.active { background-color: var(--primary); color: var(--white); box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
+        .nav-item i { width: 20px; text-align: center; font-size: 1.1rem; }
+
+        .admin-profile-mini {
+            padding: 20px;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .mini-avatar {
+            width: 40px; height: 40px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            font-weight: bold;
+        }
+
+        /* =================================================================================
+           4. MAIN LAYOUT
+           ================================================================================= */
+        /* Hidden by default until login */
+        #dashboard-container { display: none; }
+
+        .main-wrapper {
+            margin-left: var(--sidebar-width);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: 0.3s;
+        }
+
+        header {
+            height: var(--header-height);
+            background: var(--white);
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            position: sticky;
+            top: 0;
+            z-index: 40;
+        }
+
+        .header-title h2 { font-size: 1.25rem; font-weight: 700; color: var(--dark); }
+        .header-title p { font-size: 0.85rem; color: #64748b; }
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+
+        .content-body { flex: 1; overflow-y: auto; padding: 30px; }
+        .view-section { display: none; animation: fadeUp 0.4s ease-out; }
+        .view-section.active { display: block; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* =================================================================================
+           5. DASHBOARD COMPONENTS
+           ================================================================================= */
+        
+        /* Stats Cards */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 25px; margin-bottom: 35px; }
+        .stat-card {
+            background: var(--white); padding: 25px; border-radius: var(--radius);
+            box-shadow: var(--shadow-sm); border: 1px solid #e2e8f0;
+            display: flex; justify-content: space-between; align-items: flex-start;
+            transition: 0.3s;
+        }
+        .stat-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-md); }
+        .stat-val { font-size: 1.8rem; font-weight: 800; color: var(--dark); margin: 5px 0 0; }
+        .stat-label { font-size: 0.9rem; color: #64748b; font-weight: 500; }
+        .stat-icon-box { width: 50px; height: 50px; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; }
+        
+        .bg-indigo-light { background: #e0e7ff; color: var(--primary); }
+        .bg-green-light { background: #dcfce7; color: var(--success); }
+        .bg-red-light { background: #fee2e2; color: var(--danger); }
+        .bg-orange-light { background: #ffedd5; color: var(--warning); }
+
+        /* Content Cards */
+        .card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow-sm); border: 1px solid #e2e8f0; margin-bottom: 30px; overflow: hidden; }
+        .card-header { padding: 20px 25px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
+        .card-header h3 { font-size: 1.1rem; font-weight: 700; }
+
+        /* Tables */
+        .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        table { width: 100%; border-collapse: collapse; min-width: 800px; }
+        th { background: #f8fafc; padding: 15px 25px; text-align: left; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; color: #64748b; border-bottom: 1px solid #e2e8f0; }
+        td { padding: 16px 25px; border-bottom: 1px solid #f1f5f9; font-size: 0.95rem; color: #334155; vertical-align: middle; }
+        tr:hover { background: #f8fafc; }
+
+        /* Badges & Images */
+        .badge { padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; display: inline-block; }
+        .badge-success { background: #dcfce7; color: #166534; }
+        .badge-warning { background: #fef3c7; color: #92400e; }
+        .badge-danger { background: #fee2e2; color: #991b1b; }
+        .badge-info { background: #dbeafe; color: #1e40af; }
+        .badge-purple { background: #e9d5ff; color: #6b21a8; }
+        
+        .table-img { width: 60px; height: 40px; object-fit: cover; border-radius: 6px; border: 1px solid #eee; }
+
+        /* Buttons */
+        .btn { padding: 10px 20px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; font-size: 0.9rem; transition: 0.2s; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
+        .btn-sm { padding: 6px 12px; font-size: 0.8rem; }
+        .btn-delete { background: #fee2e2; color: #dc2626; }
+        .btn-activate { background: #dcfce7; color: #16a34a; }
+        .btn-edit { background: #dbeafe; color: #1e40af; }
+        .btn-dark { background: #334155; color: white; }
+        
+        /* WHATSAPP BUTTON (New) */
+        .btn-wa {
+            display: inline-flex; justify-content: center; align-items: center;
+            width: 32px; height: 32px; border-radius: 50%;
+            background: #25D366; color: white; border: none;
+            margin-left: 8px; transition: 0.2s; font-size: 1rem;
+            text-decoration: none !important;
+        }
+        .btn-wa:hover { transform: scale(1.1); box-shadow: 0 4px 10px rgba(37, 211, 102, 0.4); }
+
+        /* Forms */
+        .form-grid { display: grid; grid-template-columns: 1fr; gap: 20px; padding: 25px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; font-size: 0.9rem; color: #475569; }
+        .form-control { width: 100%; padding: 12px 16px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; transition: 0.2s; background: #fff; }
+        .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1); }
+        .search-bar { position: relative; width: 300px; }
+        .search-bar input { padding-left: 40px; }
+        .search-bar i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #94a3b8; }
+
+        /* Date/Time Column Style */
+        .dt-col { font-family: 'Poppins', sans-serif; font-size: 0.85rem; font-weight: 500; color: #555; }
+
+        /* Hash Text Style */
+        .hash-text {
+            font-family: monospace;
+            color: #64748b;
+            font-size: 0.8rem;
+            max-width: 150px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            background: #f1f5f9;
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid #e2e8f0;
+            cursor: pointer;
+        }
+        .hash-text:hover {
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .sidebar { left: -100%; }
+            .sidebar.active { left: 0; }
+            .main-wrapper { margin-left: 0; }
+            .overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 45; display: none; backdrop-filter: blur(2px); }
+            .overlay.active { display: block; }
+            #mobileToggle { display: block !important; }
+            .content-body { padding: 15px; }
+            .search-bar { width: 100%; }
+        }
+        #mobileToggle { display: none; font-size: 1.4rem; cursor: pointer; color: var(--dark); }
+
+    </style>
+</head>
+<body>
+
+    <!-- 1. LOGIN OVERLAY (Shows when logged out) -->
+    <div id="login-overlay">
+        <div class="login-box">
+            <div class="login-logo"><i class="fas fa-rocket"></i></div>
+            <h2 class="login-title">Admin Login</h2>
+            <p class="login-subtitle">Secure Access Panel</p>
+            
+            <div class="form-group" style="text-align: left;">
+                <label>Email Address</label>
+                <input type="email" id="loginEmail" class="form-control" placeholder="admin@example.com">
+            </div>
+            
+            <div class="form-group" style="text-align: left; margin-top: 15px;">
+                <label>Password</label>
+                <input type="password" id="loginPass" class="form-control" placeholder="••••••••">
+            </div>
+
+            <button class="btn btn-primary" style="width: 100%; margin-top: 25px; padding: 12px; justify-content:center;" onclick="handleLogin()">
+                <i class="fas fa-sign-in-alt"></i> Sign In
+            </button>
+        </div>
+    </div>
+
+    <!-- 2. DASHBOARD CONTAINER (Hidden until logged in) -->
+    <div id="dashboard-container">
+        
+        <!-- OVERLAY for Mobile -->
+        <div class="overlay" onclick="toggleSidebar()"></div>
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <div class="brand-box">
+                <div class="brand-logo"><i class="fas fa-rocket"></i> SkillGuru</div>
+            </div>
+
+            <div class="nav-scroller">
+                <div class="menu-category">Main Overview</div>
+                <div class="nav-item active" onclick="switchView('dashboard', this)"><i class="fas fa-th-large"></i> Dashboard</div>
+                <div class="nav-item" onclick="switchView('users', this)"><i class="fas fa-users"></i> Users & Activation</div>
+                <div class="nav-item" onclick="switchView('withdrawals', this)"><i class="fas fa-wallet"></i> Withdrawals</div>
+                <div class="nav-item" onclick="switchView('pay_requests', this)"><i class="fas fa-file-invoice-dollar"></i> Payment Requests</div>
+                <div class="nav-item" onclick="switchView('support', this)"><i class="fas fa-headset"></i> Help Desk</div>
+
+                <div class="menu-category">Security</div>
+                <div class="nav-item" onclick="switchView('pass_tools', this)"><i class="fas fa-key"></i> Password Tools</div>
+
+                <div class="menu-category">Content & Offers</div>
+                <div class="nav-item" onclick="switchView('packages', this)"><i class="fas fa-box-open"></i> Packages</div>
+                <div class="nav-item" onclick="switchView('global_offers', this)"><i class="fas fa-tags"></i> Global Offers</div>
+                <div class="nav-item" onclick="switchView('courses', this)"><i class="fas fa-video"></i> Courses</div>
+                <div class="nav-item" onclick="switchView('news', this)"><i class="fas fa-newspaper"></i> News & Updates</div>
+
+                <div class="menu-category">Configuration</div>
+                <div class="nav-item" onclick="switchView('payment', this)"><i class="fas fa-qrcode"></i> Payment Methods</div>
+                <div class="nav-item" onclick="switchView('cms', this)"><i class="fas fa-laptop-code"></i> Website CMS</div>
+            </div>
+
+            <div class="admin-profile-mini">
+                <div class="mini-avatar">A</div>
+                <div style="flex:1;">
+                    <div style="font-size:0.9rem; font-weight:700; color:var(--dark);">Super Admin</div>
+                    <div style="font-size:0.75rem; color:var(--success);">● Online</div>
+                </div>
+                <i class="fas fa-sign-out-alt" style="cursor:pointer; color:var(--danger);" onclick="logout()"></i>
+            </div>
+        </aside>
+
+        <!-- MAIN WRAPPER -->
+        <div class="main-wrapper">
+            
+            <!-- HEADER -->
+            <header>
+                <div class="header-actions">
+                    <div id="mobileToggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div>
+                    <div class="header-title">
+                        <h2 id="pageTitle">Dashboard Overview</h2>
+                        <p id="pageDesc">Welcome back, Admin.</p>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-primary btn-sm" onclick="logout()">Logout</button>
+                </div>
+            </header>
+
+            <!-- CONTENT BODY -->
+            <div class="content-body">
+
+                <!-- VIEW: DASHBOARD -->
+                <div id="dashboard" class="view-section active">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div><div class="stat-val" id="stTotalUsers">0</div><div class="stat-label">Total Users</div></div>
+                            <div class="stat-icon-box bg-indigo-light"><i class="fas fa-users"></i></div>
+                        </div>
+                        <div class="stat-card">
+                            <div><div class="stat-val" id="stActiveUsers">0</div><div class="stat-label">Active Members</div></div>
+                            <div class="stat-icon-box bg-green-light"><i class="fas fa-check-circle"></i></div>
+                        </div>
+                        <div class="stat-card">
+                            <div><div class="stat-val" id="stPendingWithdraw">0</div><div class="stat-label">Pending Payouts</div></div>
+                            <div class="stat-icon-box bg-red-light"><i class="fas fa-hourglass-half"></i></div>
+                        </div>
+                        <div class="stat-card">
+                            <div><div class="stat-val" id="stTotalPayout">₹0</div><div class="stat-label">Total Distributed</div></div>
+                            <div class="stat-icon-box bg-orange-light"><i class="fas fa-coins"></i></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW: USERS -->
+                <div id="users" class="view-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>User Management</h3>
+                            <div class="search-bar"><i class="fas fa-search"></i><input type="text" id="userSearch" class="form-control" placeholder="Search..." onkeyup="filterUsers()"></div>
+                        </div>
+                        <div class="table-container">
+                            <table id="usersTable">
+                                <thead>
+                                    <tr>
+                                        <th>User Info</th>
+                                        <th>Contact</th> 
+                                        <th>Password (Hash)</th>
+                                        <th>Package</th>
+                                        <th>Referrer</th>
+                                        <th>Wallet</th>
+                                        <th>Status</th>
+                                        <th style="text-align:right;">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW: PASSWORD TOOLS -->
+                <div id="pass_tools" class="view-section">
+                    <div class="card" style="max-width: 600px; margin: 0 auto;">
+                        <div class="card-header">
+                            <h3><i class="fas fa-shield-alt" style="color:#6366f1;"></i> Hash Generator & Tool</h3>
+                        </div>
+                        <div class="form-grid">
+                            <div style="background: #e0e7ff; border: 1px solid #c7d2fe; padding: 15px; border-radius: 8px; font-size: 0.9rem; color: #3730a3;">
+                                <i class="fas fa-info-circle"></i> <b>Instruction:</b> Type a plain password below to generate its secure SHA-256 hash. Copy the hash and use the "Key" icon in the Users list to update a user's password.
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Enter Plain Text Password</label>
+                                <input type="text" id="plainPassInput" class="form-control" placeholder="e.g. User@123">
+                            </div>
+
+                            <button class="btn btn-dark" onclick="generateAndShowHash()">
+                                <i class="fas fa-cogs"></i> Generate Hash
+                            </button>
+
+                            <div id="hashResultBox" style="display:none; margin-top:15px; background:#f8fafc; border:1px dashed #94a3b8; padding:15px; border-radius:8px;">
+                                <label style="font-size:0.8rem; font-weight:bold; color:#64748b;">GENERATED HASH:</label>
+                                <div id="hashOutput" style="word-break:break-all; font-family:monospace; color:#334155; font-size:0.9rem; margin-top:5px; font-weight:600;"></div>
+                                <button class="btn btn-sm btn-primary" style="margin-top:10px;" onclick="copyHashToClipboard()">
+                                    <i class="fas fa-copy"></i> Copy Hash
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW: PACKAGES -->
+                <div id="packages" class="view-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Packages & Offers</h3>
+                            <button class="btn btn-primary" onclick="openAddPkgModal()"><i class="fas fa-plus"></i> Add Package</button>
+                        </div>
+                        <div class="table-container">
+                            <table id="pkgTable">
+                                <thead>
+                                    <tr>
+                                        <th>Image</th>
+                                        <th>Title</th>
+                                        <th>Current Price</th>
+                                        <th>Active Comm</th>
+                                        <th>Passive Comm</th>
+                                        <th>Offer Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW: GLOBAL OFFERS -->
+                <div id="global_offers" class="view-section">
+                    <div class="card" style="max-width: 600px; margin: 0 auto;">
+                        <div class="card-header">
+                            <h3><i class="fas fa-bolt" style="color:#f59e0b;"></i> Flash Sale Configuration</h3>
+                        </div>
+                        <div class="form-grid">
+                            <div style="background: #fffbeb; border: 1px solid #fcd34d; padding: 15px; border-radius: 8px; font-size: 0.9rem; color: #92400e;">
+                                <i class="fas fa-info-circle"></i> <b>How this works:</b> Applying a global offer will automatically discount the price, active commission, and passive commission for <b>ALL</b> packages by the percentage you set. Once the time expires, prices will revert automatically.
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Discount Percentage (%)</label>
+                                <input type="number" id="globalDiscPercent" class="form-control" placeholder="e.g. 20">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Duration (Hours)</label>
+                                <input type="number" id="globalDiscHours" class="form-control" placeholder="e.g. 24">
+                            </div>
+
+                            <button class="btn btn-primary" onclick="applyGlobalOffer()">
+                                <i class="fas fa-check-double"></i> Apply to ALL Packages
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW: COURSES -->
+                <div id="courses" class="view-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Course Library</h3>
+                            <button class="btn btn-primary" onclick="openAddCourse()"><i class="fas fa-upload"></i> Upload Course</button>
+                        </div>
+                        <div class="table-container">
+                            <table id="courseTable">
+                                <thead><tr><th>Thumb</th><th>Course Name</th><th>Category</th><th>Link</th><th>Action</th></tr></thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW: NEWS -->
+                <div id="news" class="view-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>News & Updates</h3>
+                            <button class="btn btn-primary" onclick="openAddNews()"><i class="fas fa-plus"></i> Post News</button>
+                        </div>
+                        <div class="table-container">
+                            <table id="newsTable">
+                                <thead><tr><th>Image</th><th>Headline</th><th>Description</th><th>Posted On</th><th>Action</th></tr></thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW: WITHDRAWALS -->
+                <div id="withdrawals" class="view-section">
+                    <div class="card">
+                        <div class="card-header"><h3>Withdrawal Requests</h3></div>
+                        <div class="table-container">
+                            <table id="withdrawTable">
+                                <thead><tr><th>User UID</th><th>Amount</th><th>Details</th><th>Requested At</th><th>Status</th><th>Action</th></tr></thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW: PAYMENT REQUESTS -->
+                <div id="pay_requests" class="view-section">
+                    <div class="card">
+                        <div class="card-header"><h3>Incoming Payments (Pending Verification)</h3></div>
+                        <div class="table-container">
+                            <table id="payReqTable">
+                                <thead>
+                                    <tr>
+                                        <th>User UID</th>
+                                        <th>Package</th>
+                                        <th>Amount</th>
+                                        <th>UTR (Transaction ID)</th>
+                                        <th>Requested Time</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td colspan="6" align="center">Loading Payments...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW: SUPPORT -->
+                <div id="support" class="view-section">
+                    <div class="card">
+                        <div class="card-header"><h3>Help Desk (Support Tickets)</h3></div>
+                        <div class="table-container">
+                            <table id="supportTable">
+                                <thead><tr><th>Ticket ID</th><th>User</th><th>Subject</th><th>Message</th><th>Created At</th><th>Status</th><th>Action</th></tr></thead>
+                                <tbody><tr><td colspan="7" align="center">Loading Tickets...</td></tr></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW: PAYMENT SETTINGS -->
+                <div id="payment" class="view-section">
+                    <div class="card" style="max-width: 600px;">
+                        <div class="card-header"><h3>Payment Configuration</h3></div>
+                        <div class="form-grid">
+                            <div class="form-group"><label>Admin UPI ID</label><input type="text" id="adminUpi" class="form-control"></div>
+                            <div class="form-group"><label>QR Code URL</label><input type="text" id="adminQr" class="form-control"></div>
+                            <button class="btn btn-success" onclick="savePaymentInfo()">Save Changes</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW: CMS -->
+                <div id="cms" class="view-section">
+                    <div class="card" style="max-width: 800px;">
+                        <div class="card-header"><h3>Community & CMS Settings</h3></div>
+                        <div class="form-grid">
+                            <div class="form-group"><label>Hero/Banner Title</label><input type="text" id="cmsTitle" class="form-control"></div>
+                            
+                            <h4 style="margin-top:20px; border-bottom:1px solid #eee; padding-bottom:10px;">Community Links</h4>
+                            
+                            <div class="form-group"><label>WhatsApp Group Link</label><input type="text" id="cmsWaGrp" class="form-control" placeholder="https://chat.whatsapp.com/..."></div>
+                            <div class="form-group"><label>Telegram Channel/Group Link</label><input type="text" id="cmsTg" class="form-control" placeholder="https://t.me/..."></div>
+                            <div class="form-group"><label>WhatsApp Support Number</label><input type="number" id="cmsWaNum" class="form-control" placeholder="919999999999"></div>
+                            <div class="form-group"><label>Instagram Profile Link</label><input type="text" id="cmsInsta" class="form-control" placeholder="https://instagram.com/..."></div>
+                            <div class="form-group"><label>YouTube Channel Link</label><input type="text" id="cmsYt" class="form-control" placeholder="https://youtube.com/..."></div>
+                            
+                            <button class="btn btn-primary" onclick="saveCms()">Update Settings</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- FIREBASE SCRIPTS -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+
+    <script>
+        // =================================================================================
+        // 1. FIREBASE CONFIG & AUTH
+        // =================================================================================
+        const firebaseConfig = {
+  apiKey: "AIzaSyBSUjAVEj0u85ul27JzRGVhEaT4SIBDRjk",
+  authDomain: "wrok-skillguru.firebaseapp.com",
+  databaseURL: "https://wrok-skillguru-default-rtdb.firebaseio.com",
+  projectId: "wrok-skillguru",
+  storageBucket: "wrok-skillguru.firebasestorage.app",
+  messagingSenderId: "636485224747",
+  appId: "1:636485224747:web:f3865040f4dd7e1d2a9d6e"
+};
+        
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        const auth = firebase.auth();
+
+        let ALL_PACKAGES = {};
+        const ADMIN_EMAIL = "mr6320274@gmail.com";
+        const ADMIN_PASS = "Mahendr@2011";
+
+        // =================================================================================
+        // 2. HELPER FUNCTIONS (Time Formatting & Crypto)
+        // =================================================================================
+        
+        /**
+         * Formats a date string or timestamp into "DD MMM, YYYY at HH:MM AM/PM"
+         */
+        function formatDateWithTime(dateInput) {
+            if (!dateInput) return 'N/A';
+            const date = new Date(dateInput);
+            if (isNaN(date.getTime())) return 'Invalid Date';
+
+            return date.toLocaleString('en-IN', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true,
+                timeZone: 'Asia/Kolkata' // Ensuring India time
+            });
+        }
+
+        function readFileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        /**
+         * Generates a SHA-256 Hash of a string
+         */
+        async function sha256(message) {
+            // encode as (utf-8)
+            const msgBuffer = new TextEncoder().encode(message);
+            // hash the message
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            // convert ArrayBuffer to Array
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            // convert bytes to hex string
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            return hashHex;
+        }
+
+        // =================================================================================
+        // 3. LOGIN LOGIC
+        // =================================================================================
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                document.getElementById('login-overlay').style.display = 'none';
+                document.getElementById('dashboard-container').style.display = 'block';
+                initAdminPanel();
+            } else {
+                document.getElementById('login-overlay').style.display = 'flex';
+                document.getElementById('dashboard-container').style.display = 'none';
+            }
+        });
+
+        function handleLogin() {
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPass').value.trim();
+
+            if(!email || !password) {
+                Swal.fire('Error', 'Please enter email and password', 'error');
+                return;
+            }
+
+            const btn = document.querySelector('.login-box .btn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            btn.disabled = true;
+
+            auth.signInWithEmailAndPassword(email, password)
+                .then(() => { })
+                .catch((error) => {
+                    if(error.code === 'auth/user-not-found' && email === ADMIN_EMAIL && password === ADMIN_PASS) {
+                        auth.createUserWithEmailAndPassword(email, password)
+                            .then(() => { Swal.fire({ icon: 'success', title: 'Account Created', text: 'Admin account setup complete.' }); })
+                            .catch(e => {
+                                btn.innerHTML = originalText; btn.disabled = false;
+                                Swal.fire('Setup Error', e.message, 'error');
+                            });
+                    } else {
+                        btn.innerHTML = originalText; btn.disabled = false;
+                        Swal.fire({ icon: 'error', title: 'Login Failed', text: 'Invalid credentials or network error.' });
+                    }
+                });
+        }
+
+        // =================================================================================
+        // 4. ADMIN PANEL INIT
+        // =================================================================================
+        function initAdminPanel() {
+            loadStats();
+            loadUsers();
+            loadPackages(); // Contains auto-revert logic
+            loadWithdrawals();
+            loadCourses(); 
+            loadNews();
+            loadSupport(); 
+            loadPaymentLogs();
+            loadSettings();
+        }
+
+        // =================================================================================
+        // 5. PACKAGES & OFFERS LOGIC
+        // =================================================================================
+        
+        // This function handles loading packages AND checking for expired offers
+        function loadPackages() {
+            db.ref('packages').on('value', snap => {
+                ALL_PACKAGES = snap.val() || {};
+                const tb = document.getElementById('pkgTable').querySelector('tbody');
+                tb.innerHTML = '';
+                
+                const now = Date.now();
+                let hasUpdates = false;
+
+                // 1. Check for expired offers first
+                Object.keys(ALL_PACKAGES).forEach(key => {
+                    const p = ALL_PACKAGES[key];
+                    if (p.offerEndsAt && now > p.offerEndsAt) {
+                        // Offer Expired! Revert values.
+                        if (p.originalPrice) {
+                            db.ref('packages/' + key).update({
+                                price: p.originalPrice,
+                                activeCommission: p.originalActiveComm || p.activeCommission,
+                                passiveCommission: p.originalPassiveComm || p.passiveCommission,
+                                offerEndsAt: null,
+                                discountPercent: null,
+                                originalPrice: null,
+                                originalActiveComm: null,
+                                originalPassiveComm: null
+                            });
+                            hasUpdates = true; // DB update triggered, listener will fire again
+                        }
+                    }
+                });
+
+                if(hasUpdates) return; // Wait for the DB update to reflect
+
+                // 2. Render Table
+                snap.forEach(c => {
+                    const p = c.val();
+                    const key = c.key;
+                    
+                    let offerBadge = '<span class="badge badge-warning">Standard</span>';
+                    let priceDisplay = `₹${p.price}`;
+                    
+                    if (p.offerEndsAt && p.offerEndsAt > now) {
+                        const timeLeft = p.offerEndsAt - now;
+                        const hours = Math.floor(timeLeft / (1000 * 60 * 60));
+                        const mins = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                        offerBadge = `<span class="badge badge-purple"><i class="fas fa-stopwatch"></i> Deal: ${hours}h ${mins}m left</span>`;
+                        priceDisplay = `<span style="text-decoration:line-through; color:#aaa; font-size:0.8em;">₹${p.originalPrice}</span> <br> <b style="color:#ef4444">₹${p.price}</b>`;
+                    }
+
+                    tb.innerHTML += `
+                        <tr>
+                            <td><img src="${p.image || 'https://via.placeholder.com/50'}" class="table-img"></td>
+                            <td><b>${p.title}</b></td>
+                            <td>${priceDisplay}</td>
+                            <td class="text-success">₹${p.activeCommission}</td>
+                            <td class="text-warning">₹${p.passiveCommission}</td>
+                            <td>${offerBadge}</td>
+                            <td>
+                                <button class="btn btn-sm btn-edit" onclick="editPackage('${key}')"><i class="fas fa-edit"></i> Edit/Offer</button>
+                                <button class="btn btn-sm btn-delete" onclick="db.ref('packages/${key}').remove()"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>`;
+                });
+            });
+        }
+
+        async function openAddPkgModal() {
+            const { value: form } = await Swal.fire({
+                title: 'Add New Package',
+                html: `
+                    <input id="swal-t" class="swal2-input" placeholder="Title (e.g. Gold)">
+                    <input id="swal-p" class="swal2-input" type="number" placeholder="Base Price">
+                    <input id="swal-ac" class="swal2-input" type="number" placeholder="Active Comm (L1)">
+                    <input id="swal-pc" class="swal2-input" type="number" placeholder="Passive Comm (L2)">
+                    <div style="margin-top:10px; text-align:left;">
+                        <label>Package Image</label>
+                        <input type="file" id="swal-img" class="swal2-file" accept="image/*">
+                    </div>
+                `,
+                focusConfirm: false,
+                preConfirm: async () => {
+                    const fileInput = document.getElementById('swal-img');
+                    let imgBase64 = '';
+                    if(fileInput.files.length > 0) {
+                        imgBase64 = await readFileToBase64(fileInput.files[0]);
+                    }
+                    return {
+                        title: document.getElementById('swal-t').value,
+                        price: document.getElementById('swal-p').value,
+                        ac: document.getElementById('swal-ac').value,
+                        pc: document.getElementById('swal-pc').value,
+                        image: imgBase64
+                    }
+                }
+            });
+
+            if (form) {
+                db.ref('packages').push({
+                    title: form.title, price: parseInt(form.price),
+                    activeCommission: parseInt(form.ac), passiveCommission: parseInt(form.pc),
+                    image: form.image
+                });
+                Swal.fire('Saved', 'Package added successfully.', 'success');
+            }
+        }
+
+        async function editPackage(key) {
+            // Get current package data
+            const snap = await db.ref('packages/' + key).once('value');
+            const p = snap.val();
+
+            // Determine values to show in edit form (Always show Base values if offer is active)
+            const currentPrice = p.originalPrice ? p.originalPrice : p.price;
+            const currentAc = p.originalActiveComm ? p.originalActiveComm : p.activeCommission;
+            const currentPc = p.originalPassiveComm ? p.originalPassiveComm : p.passiveCommission;
+
+            const { value: form } = await Swal.fire({
+                title: 'Edit Package & Offers',
+                width: 600,
+                html: `
+                    <div style="text-align:left; font-size:0.9rem; color:#666; margin-bottom:10px;">Base Details</div>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                        <div><label>Title</label><input id="edit-t" class="swal2-input" style="width:100%; margin:5px 0;" value="${p.title}"></div>
+                        <div><label>Base Price</label><input id="edit-p" class="swal2-input" type="number" style="width:100%; margin:5px 0;" value="${currentPrice}"></div>
+                        <div><label>Base Active</label><input id="edit-ac" class="swal2-input" type="number" style="width:100%; margin:5px 0;" value="${currentAc}"></div>
+                        <div><label>Base Passive</label><input id="edit-pc" class="swal2-input" type="number" style="width:100%; margin:5px 0;" value="${currentPc}"></div>
+                    </div>
+                    
+                    <hr style="margin:20px 0; border:0; border-top:1px dashed #ccc;">
+                    
+                    <div style="text-align:left; font-size:0.9rem; color:#d97706; font-weight:bold; margin-bottom:10px;"><i class="fas fa-tags"></i> Add Time-Limited Offer</div>
+                    <p style="font-size:0.8rem; text-align:left; color:#888;">Leave 0 to remove offer. This reduces price & commission by %.</p>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                        <div><label>Discount %</label><input id="edit-disc" class="swal2-input" type="number" style="width:100%; margin:5px 0;" placeholder="0" value="${p.discountPercent || ''}"></div>
+                        <div><label>Duration (Hours)</label><input id="edit-hours" class="swal2-input" type="number" style="width:100%; margin:5px 0;" placeholder="0"></div>
+                    </div>
+                `,
+                preConfirm: () => {
+                    return {
+                        title: document.getElementById('edit-t').value,
+                        price: parseInt(document.getElementById('edit-p').value),
+                        ac: parseInt(document.getElementById('edit-ac').value),
+                        pc: parseInt(document.getElementById('edit-pc').value),
+                        disc: parseInt(document.getElementById('edit-disc').value || 0),
+                        hours: parseFloat(document.getElementById('edit-hours').value || 0)
+                    }
+                }
+            });
+
+            if(form) {
+                const updates = {};
+                
+                // If discount logic applies
+                if (form.disc > 0 && form.hours > 0) {
+                    const discountFactor = (100 - form.disc) / 100;
+                    
+                    // Calculate discounted values
+                    const newPrice = Math.floor(form.price * discountFactor);
+                    const newAc = Math.floor(form.ac * discountFactor);
+                    const newPc = Math.floor(form.pc * discountFactor);
+                    const endTime = Date.now() + (form.hours * 60 * 60 * 1000);
+
+                    updates.title = form.title;
+                    updates.price = newPrice;
+                    updates.activeCommission = newAc;
+                    updates.passiveCommission = newPc;
+                    
+                    // Store originals so we can revert later
+                    updates.originalPrice = form.price;
+                    updates.originalActiveComm = form.ac;
+                    updates.originalPassiveComm = form.pc;
+                    
+                    updates.discountPercent = form.disc;
+                    updates.offerEndsAt = endTime;
+
+                    Swal.fire('Offer Active', `Price reduced by ${form.disc}% for ${form.hours} hours.`, 'success');
+
+                } else {
+                    // No offer or offer removed - set standard values
+                    updates.title = form.title;
+                    updates.price = form.price;
+                    updates.activeCommission = form.ac;
+                    updates.passiveCommission = form.pc;
+                    
+                    // Clear offer data
+                    updates.originalPrice = null;
+                    updates.originalActiveComm = null;
+                    updates.originalPassiveComm = null;
+                    updates.discountPercent = null;
+                    updates.offerEndsAt = null;
+                    
+                    Swal.fire('Updated', 'Package details updated standardly.', 'success');
+                }
+
+                db.ref('packages/' + key).update(updates);
+            }
+        }
+
+        // --- GLOBAL OFFERS LOGIC ---
+        async function applyGlobalOffer() {
+            const percent = parseInt(document.getElementById('globalDiscPercent').value);
+            const hours = parseFloat(document.getElementById('globalDiscHours').value);
+
+            if(!percent || !hours || percent <= 0 || hours <= 0) {
+                return Swal.fire('Invalid Input', 'Please enter valid percentage and hours.', 'error');
+            }
+
+            const confirm = await Swal.fire({
+                title: 'Apply Global Discount?',
+                text: `This will apply a ${percent}% discount to ALL packages for ${hours} hours. Existing offers will be overwritten.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                confirmButtonText: 'Yes, Apply to All'
+            });
+
+            if (!confirm.isConfirmed) return;
+
+            Swal.showLoading();
+
+            const snap = await db.ref('packages').once('value');
+            if (!snap.exists()) {
+                Swal.fire('Error', 'No packages found to update.', 'error');
+                return;
+            }
+
+            const updates = {};
+            const now = Date.now();
+            const endTime = now + (hours * 60 * 60 * 1000);
+            const discountFactor = (100 - percent) / 100;
+
+            snap.forEach(c => {
+                const key = c.key;
+                const p = c.val();
+
+                // Determine base price (if already discounted, use original, else use current)
+                const basePrice = p.originalPrice ? p.originalPrice : p.price;
+                const baseAc = p.originalActiveComm ? p.originalActiveComm : p.activeCommission;
+                const basePc = p.originalPassiveComm ? p.originalPassiveComm : p.passiveCommission;
+
+                // Calculate new discounted values
+                const newPrice = Math.floor(basePrice * discountFactor);
+                const newAc = Math.floor(baseAc * discountFactor);
+                const newPc = Math.floor(basePc * discountFactor);
+
+                updates[`packages/${key}/price`] = newPrice;
+                updates[`packages/${key}/activeCommission`] = newAc;
+                updates[`packages/${key}/passiveCommission`] = newPc;
+                
+                // Store originals
+                updates[`packages/${key}/originalPrice`] = basePrice;
+                updates[`packages/${key}/originalActiveComm`] = baseAc;
+                updates[`packages/${key}/originalPassiveComm`] = basePc;
+                
+                updates[`packages/${key}/discountPercent`] = percent;
+                updates[`packages/${key}/offerEndsAt`] = endTime;
+            });
+
+            await db.ref().update(updates);
+            Swal.fire('Success', 'Global offer applied successfully!', 'success');
+        }
+
+        // =================================================================================
+        // 6. COURSES 
+        // =================================================================================
+        function loadCourses() {
+            db.ref('courses').on('value', snap => {
+                const tb = document.getElementById('courseTable').querySelector('tbody');
+                tb.innerHTML = '';
+                if(snap.exists()) {
+                    snap.forEach(c => {
+                        const d = c.val();
+                        const img = d.thumbnail || 'https://via.placeholder.com/100x60?text=No+Img';
+                        
+                        tb.innerHTML += `
+                            <tr>
+                                <td><img src="${img}" class="table-img"></td>
+                                <td>${d.title}</td>
+                                <td>${d.category}</td>
+                                <td><a href="${d.videoUrl}" target="_blank" class="btn btn-sm btn-primary"><i class="fas fa-external-link-alt"></i> View</a></td>
+                                <td><button class="btn btn-sm btn-delete" onclick="db.ref('courses/${c.key}').remove()">Del</button></td>
+                            </tr>
+                        `;
+                    });
+                } else {
+                    tb.innerHTML = `<tr><td colspan="5" style="text-align:center;">No courses found. Upload one!</td></tr>`;
+                }
+            });
+        }
+
+        async function openAddCourse() {
+            const { value: form } = await Swal.fire({
+                title: 'Add New Course',
+                html: `
+                    <input id="ct" class="swal2-input" placeholder="Course Name/Title">
+                    <input id="cc" class="swal2-input" placeholder="Category (e.g. Affiliate Marketing)">
+                    <input id="cl" class="swal2-input" placeholder="Video/Download Link (YouTube/Drive)">
+                    <div style="margin-top:10px; text-align:left;">
+                        <label>Course Thumbnail (Image)</label>
+                        <input type="file" id="c-img" class="swal2-file" accept="image/*">
+                    </div>
+                `,
+                preConfirm: async () => {
+                    const fileInput = document.getElementById('c-img');
+                    let imgBase64 = '';
+                    if(fileInput.files.length > 0) {
+                        try {
+                            imgBase64 = await readFileToBase64(fileInput.files[0]);
+                        } catch (e) { console.error("Image read error", e); }
+                    }
+                    const title = document.getElementById('ct').value;
+                    const link = document.getElementById('cl').value;
+
+                    if(!title || !link) {
+                        Swal.showValidationMessage('Title and Link are required');
+                        return;
+                    }
+
+                    return {
+                        title: title,
+                        category: document.getElementById('cc').value,
+                        videoUrl: link,
+                        thumbnail: imgBase64
+                    }
+                }
+            });
+            
+            if(form) {
+                db.ref('courses').push(form)
+                  .then(() => Swal.fire('Success', 'Course Added Successfully', 'success'))
+                  .catch(e => Swal.fire('Error', e.message, 'error'));
+            }
+        }
+
+        // =================================================================================
+        // 7. NEWS
+        // =================================================================================
+        function loadNews() {
+            db.ref('news').on('value', snap => {
+                const tb = document.getElementById('newsTable').querySelector('tbody');
+                tb.innerHTML = '';
+                if(snap.exists()) {
+                    snap.forEach(c => {
+                        const d = c.val();
+                        const img = d.image || 'https://via.placeholder.com/50';
+                        tb.innerHTML += `<tr>
+                                    <td><img src="${img}" class="table-img"></td>
+                                    <td>${d.headline}</td>
+                                    <td><small>${d.content ? d.content.substring(0,50) : ''}...</small></td>
+                                    <td class="dt-col">${formatDateWithTime(d.date)}</td>
+                                    <td><button class="btn btn-sm btn-delete" onclick="db.ref('news/${c.key}').remove()">Del</button></td>
+                                   </tr>`;
+                    });
+                }
+            });
+        }
+
+        async function openAddNews() {
+            const { value: form } = await Swal.fire({
+                title: 'Post Latest News',
+                html: `
+                    <input id="nt" class="swal2-input" placeholder="News Headline">
+                    <textarea id="nd" class="swal2-textarea" placeholder="Full News Content/Description" style="height:100px;"></textarea>
+                    <div style="margin-top:10px; text-align:left;">
+                        <label>News Cover Image</label>
+                        <input type="file" id="n-img" class="swal2-file" accept="image/*">
+                    </div>
+                `,
+                preConfirm: async () => {
+                    const fileInput = document.getElementById('n-img');
+                    let imgBase64 = '';
+                    if(fileInput.files.length > 0) {
+                        imgBase64 = await readFileToBase64(fileInput.files[0]);
+                    }
+                    return {
+                        headline: document.getElementById('nt').value,
+                        content: document.getElementById('nd').value,
+                        image: imgBase64,
+                        date: new Date().toISOString()
+                    }
+                }
+            });
+            if(form) {
+                db.ref('news').push(form);
+                Swal.fire('Posted', 'News published successfully', 'success');
+            }
+        }
+
+        // =================================================================================
+        // 8. USERS & BALANCE MANAGER (UPDATED FOR PASSWORD)
+        // =================================================================================
+        function loadUsers() {
+            db.ref('users').on('value', snap => {
+                const tbody = document.getElementById('usersTable').querySelector('tbody');
+                tbody.innerHTML = ''; 
+                
+                const usersArr = [];
+                snap.forEach(c => { usersArr.push({key:c.key, ...c.val()}); });
+                usersArr.reverse();
+
+                usersArr.forEach((u) => {
+                    const statusClass = u.status === 'Active' ? 'badge-success' : 'badge-warning';
+                    const wallet = u.walletBalance || 0;
+                    
+                    // Display Password Hash or placeholder
+                    // We assume 'password' field stores the hash or plain text in DB
+                    // If no password, show N/A
+                    const passDisplay = u.password ? `<div class="hash-text" onclick="copyText('${u.password}')" title="Click to copy">${u.password}</div>` : '<span style="color:#ccc">N/A</span>';
+
+                    // --- WHATSAPP LOGIC ---
+                    const phone = u.mobile || u.phone || ''; 
+                    let phoneDisplay = '<span style="color:#ccc">N/A</span>';
+                    let waBtn = '';
+                    
+                    if(phone) {
+                        phoneDisplay = `<span style="font-weight:600; color:#333;">${phone}</span>`;
+                        let cleanNum = phone.replace(/[^0-9]/g, '');
+                        if(cleanNum.length === 10) cleanNum = '91' + cleanNum;
+                        
+                        waBtn = `<a href="https://wa.me/${cleanNum}" target="_blank" class="btn-wa" title="Chat on WhatsApp">
+                                    <i class="fab fa-whatsapp"></i>
+                                 </a>`;
+                    }
+
+                    const row = `
+                        <tr>
+                            <td>
+                                <div style="display:flex; align-items:center; gap:10px;">
+                                    <div style="width:35px; height:35px; background:#e2e8f0; border-radius:50%; display:flex; justify-content:center; align-items:center; font-weight:bold;">${u.name.charAt(0)}</div>
+                                    <div><div style="font-weight:600;">${u.name}</div><div style="font-size:0.8rem; color:#94a3b8;">${u.email}</div></div>
+                                </div>
+                            </td>
+                            <td>
+                                <div style="display:flex; align-items:center;">
+                                    ${phoneDisplay}
+                                    ${waBtn}
+                                </div>
+                            </td>
+                            <td>${passDisplay}</td>
+                            <td>${u.package || 'N/A'}</td>
+                            <td>${u.referrer || 'Admin'}</td>
+                            <td style="font-weight:700; color:var(--primary);">₹${wallet}</td>
+                            <td><span class="badge ${statusClass}">${u.status}</span></td>
+                            <td style="text-align:right;">
+                                <button class="btn btn-sm btn-edit" title="Manage Wallet" onclick="manageWallet('${u.key}', ${wallet})"><i class="fas fa-wallet"></i></button>
+                                <button class="btn btn-sm btn-dark" title="Edit Password" onclick="editUserPassword('${u.key}')"><i class="fas fa-key"></i></button>
+                                ${u.status !== 'Active' ? `<button class="btn btn-sm btn-activate" onclick="activateUser('${u.key}', '${u.package}', '${u.referrer}')">Activate</button>` : ''}
+                                <button class="btn btn-sm btn-delete" onclick="deleteUser('${u.key}')"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>`;
+                    tbody.innerHTML += row;
+                });
+            });
+        }
+
+        async function editUserPassword(uid) {
+            const { value: newHash } = await Swal.fire({
+                title: 'Update User Password',
+                text: 'Paste the Generated Hash from the Password Tools section here.',
+                input: 'text',
+                inputPlaceholder: 'Paste Hash Here',
+                showCancelButton: true,
+                confirmButtonText: 'Update'
+            });
+
+            if (newHash) {
+                db.ref('users/' + uid).update({ password: newHash })
+                  .then(() => Swal.fire('Updated', 'User password hash updated in database.', 'success'))
+                  .catch(err => Swal.fire('Error', err.message, 'error'));
+            }
+        }
+
+        function copyText(text) {
+            navigator.clipboard.writeText(text);
+            const Toast = Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 2000 });
+            Toast.fire({ icon: 'success', title: 'Hash Copied!' });
+        }
+
+        async function generateAndShowHash() {
+            const plain = document.getElementById('plainPassInput').value;
+            if(!plain) return Swal.fire('Error', 'Please enter a password', 'error');
+            
+            const hashed = await sha256(plain);
+            document.getElementById('hashOutput').innerText = hashed;
+            document.getElementById('hashResultBox').style.display = 'block';
+        }
+
+        function copyHashToClipboard() {
+            const hash = document.getElementById('hashOutput').innerText;
+            if(hash) copyText(hash);
+        }
+
+        async function manageWallet(uid, currentBal) {
+            const { value: form } = await Swal.fire({
+                title: 'Manage User Wallet',
+                html: `
+                    <p>Current Balance: <b>₹${currentBal}</b></p>
+                    <select id="w-action" class="swal2-select">
+                        <option value="add">Add Money (+)</option>
+                        <option value="deduct">Deduct Money (-)</option>
+                    </select>
+                    <input id="w-amount" type="number" class="swal2-input" placeholder="Amount">
+                    <input id="w-reason" type="text" class="swal2-input" placeholder="Reason (e.g. Bonus, Penalty)">
+                `,
+                preConfirm: () => {
+                    return {
+                        action: document.getElementById('w-action').value,
+                        amount: parseFloat(document.getElementById('w-amount').value),
+                        reason: document.getElementById('w-reason').value
+                    }
+                }
+            });
+
+            if (form) {
+                if(!form.amount || form.amount <= 0) return Swal.fire('Error', 'Invalid Amount', 'error');
+                
+                let newBal = currentBal;
+                let type = '';
+
+                if(form.action === 'add') {
+                    newBal += form.amount;
+                    type = 'Admin Bonus/Credit';
+                } else {
+                    newBal -= form.amount;
+                    type = 'Admin Penalty/Debit';
+                    if(newBal < 0) newBal = 0; 
+                }
+
+                await db.ref('users/' + uid).update({ walletBalance: newBal });
+                await db.ref('earnings/' + uid).push({
+                    amount: form.amount,
+                    type: type + (form.reason ? ` (${form.reason})` : ''),
+                    date: new Date().toISOString(),
+                    fromUser: 'Admin'
+                });
+
+                Swal.fire('Success', 'Wallet Updated', 'success');
+            }
+        }
+
+        async function activateUser(uid, pkgName, referrerCode) {
+            const confirm = await Swal.fire({ title: 'Activate?', text: "Distribute commissions?", icon: 'question', showCancelButton: true });
+            if(!confirm.isConfirmed) return;
+
+            Swal.showLoading();
+            try {
+                let activeComm = 0, passiveComm = 0;
+                // Use Object.values from global packages to find commission
+                Object.values(ALL_PACKAGES).forEach(p => {
+                    if(p.title === pkgName) { 
+                        // IMPORTANT: Use current active commission (which might be discounted)
+                        activeComm = parseFloat(p.activeCommission); 
+                        passiveComm = parseFloat(p.passiveCommission); 
+                    }
+                });
+
+                const updates = {};
+                const now = new Date().toISOString();
+                updates[`users/${uid}/status`] = 'Active';
+
+                if(referrerCode && referrerCode.toLowerCase() !== 'admin') {
+                    const refSnap = await db.ref('users').orderByChild('username').equalTo(String(referrerCode)).once('value');
+                    if(refSnap.exists()) {
+                        const refUid = Object.keys(refSnap.val())[0];
+                        const refData = refSnap.val()[refUid];
+                        updates[`users/${refUid}/walletBalance`] = (refData.walletBalance || 0) + activeComm;
+                        updates[`earnings/${refUid}/${db.ref().push().key}`] = { amount: activeComm, type: 'Active Commission', fromUser: uid, date: now };
+
+                        const grandRef = refData.referrer;
+                        if(grandRef && grandRef.toLowerCase() !== 'admin') {
+                            const gSnap = await db.ref('users').orderByChild('username').equalTo(String(grandRef)).once('value');
+                            if(gSnap.exists()) {
+                                const gUid = Object.keys(gSnap.val())[0];
+                                const gData = gSnap.val()[gUid];
+                                updates[`users/${gUid}/walletBalance`] = (gData.walletBalance || 0) + passiveComm;
+                                updates[`earnings/${gUid}/${db.ref().push().key}`] = { amount: passiveComm, type: 'Passive Commission', fromUser: uid, date: now };
+                            }
+                        }
+                    }
+                }
+                await db.ref().update(updates);
+                Swal.fire('Activated', 'User active & commissions sent.', 'success');
+            } catch (err) { Swal.fire('Error', err.message, 'error'); }
+        }
+
+        function deleteUser(uid) {
+            if(confirm("Delete User?")) db.ref('users/'+uid).remove();
+        }
+
+        function filterUsers() {
+            const input = document.getElementById('userSearch').value.toLowerCase();
+            const rows = document.getElementById('usersTable').getElementsByTagName('tr');
+            for (let i = 1; i < rows.length; i++) {
+                rows[i].style.display = rows[i].innerText.toLowerCase().includes(input) ? '' : 'none';
+            }
+        }
+
+        // =================================================================================
+        // 9. STATS & WITHDRAWALS
+        // =================================================================================
+        function loadStats() {
+            db.ref('users').on('value', snap => {
+                let total = 0, active = 0;
+                snap.forEach(c => { total++; if(c.val().status === 'Active') active++; });
+                document.getElementById('stTotalUsers').innerText = total;
+                document.getElementById('stActiveUsers').innerText = active;
+            });
+            db.ref('withdraw').on('value', snap => {
+                let pending = 0, paid = 0;
+                snap.forEach(c => { if(c.val().status === 'Pending') pending++; if(c.val().status === 'Paid') paid += parseInt(c.val().amount); });
+                document.getElementById('stPendingWithdraw').innerText = pending;
+                document.getElementById('stTotalPayout').innerText = "₹" + paid;
+            });
+        }
+
+        function loadWithdrawals() {
+            db.ref('withdraw').on('value', snap => {
+                const tb = document.getElementById('withdrawTable').querySelector('tbody');
+                tb.innerHTML = '';
+                if(!snap.exists()) { tb.innerHTML = '<tr><td colspan="6" align="center">No requests found</td></tr>'; return; }
+
+                snap.forEach(c => {
+                    const w = c.val();
+                    let action = '';
+                    
+                    if(w.status === 'Pending') {
+                        action = `<button class="btn btn-sm btn-activate" onclick="db.ref('withdraw/${c.key}').update({status:'Paid'})">Pay</button> 
+                                  <button class="btn btn-sm btn-delete" onclick="rejectW('${c.key}','${w.userId}',${w.amount})">Reject</button>`;
+                    } else {
+                        action = `<button class="btn btn-sm btn-delete" title="Delete History" onclick="db.ref('withdraw/${c.key}').remove()"><i class="fas fa-trash"></i></button>`;
+                    }
+                    const badgeClass = w.status==='Paid'?'badge-success': (w.status==='Rejected'?'badge-danger':'badge-warning');
+                    tb.innerHTML += `
+                        <tr>
+                            <td>${w.userId.slice(0,6)}...</td>
+                            <td>₹${w.amount}</td>
+                            <td>${w.details}</td>
+                            <td class="dt-col">${formatDateWithTime(w.date)}</td>
+                            <td><span class="badge ${badgeClass}">${w.status}</span></td>
+                            <td>${action}</td>
+                        </tr>`;
+                });
+            });
+        }
+
+        async function rejectW(key, uid, amt) {
+            await db.ref('withdraw/'+key).update({status:'Rejected'});
+            const u = await db.ref('users/'+uid).once('value');
+            await db.ref('users/'+uid).update({walletBalance: (u.val().walletBalance||0) + amt});
+            Swal.fire('Rejected', 'Refunded to wallet', 'info');
+        }
+
+        // =================================================================================
+        // 10. PAYMENT LOGS
+        // =================================================================================
+        function loadPaymentLogs() {
+            db.ref('payment_logs').on('value', snap => {
+                const tb = document.getElementById('payReqTable').querySelector('tbody');
+                tb.innerHTML = '';
+                if(!snap.exists()) { 
+                    tb.innerHTML = '<tr><td colspan="6" align="center">No pending payments</td></tr>'; 
+                    return; 
+                }
+                
+                const logs = [];
+                snap.forEach(c => logs.push({ key: c.key, ...c.val() }));
+                logs.reverse();
+
+                logs.forEach(log => {
+                    tb.innerHTML += `
+                        <tr>
+                            <td><small>${log.uid}</small></td>
+                            <td><b>${log.package}</b></td>
+                            <td style="color:green; font-weight:bold;">₹${log.amount}</td>
+                            <td style="font-family:monospace; background:#eee; padding:2px 5px; border-radius:4px;">${log.utr}</td>
+                            <td class="dt-col">${formatDateWithTime(log.date)}</td>
+                            <td>
+                                <button class="btn btn-sm btn-activate" onclick="verifyLogAndActivate('${log.uid}', '${log.package}', '${log.key}')">Verify</button>
+                                <button class="btn btn-sm btn-delete" onclick="db.ref('payment_logs/${log.key}').remove()"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            });
+        }
+
+        async function verifyLogAndActivate(uid, pkgName, logKey) {
+            const uSnap = await db.ref('users/' + uid).once('value');
+            if(!uSnap.exists()) return Swal.fire('Error', 'User not found in database', 'error');
+            
+            const uData = uSnap.val();
+            await activateUser(uid, pkgName, uData.referrer);
+        }
+
+        // =================================================================================
+        // 11. SUPPORT TICKETS
+        // =================================================================================
+        function loadSupport() {
+            db.ref('tickets').on('value', snap => {
+                const tb = document.getElementById('supportTable').querySelector('tbody');
+                tb.innerHTML = '';
+                if(!snap.exists()) { tb.innerHTML = '<tr><td colspan="7" align="center">No active tickets</td></tr>'; return; }
+
+                snap.forEach(c => {
+                    const t = c.val();
+                    const isClosed = t.status === 'Closed';
+                    const btn = isClosed 
+                        ? `<span style="color:#aaa;">Archived</span>` 
+                        : `<button class="btn btn-sm btn-delete" onclick="db.ref('tickets/${c.key}').update({status:'Closed'})">Close Ticket</button>`;
+                    
+                    tb.innerHTML += `
+                        <tr>
+                            <td>#${c.key.slice(-4)}</td>
+                            <td>${t.userName}</td>
+                            <td>${t.subject}</td>
+                            <td>${t.message}</td>
+                            <td class="dt-col">${formatDateWithTime(t.createdAt || t.date)}</td>
+                            <td><span class="badge ${isClosed ? 'badge-secondary' : 'badge-warning'}">${t.status}</span></td>
+                            <td>${btn}</td>
+                        </tr>
+                    `;
+                });
+            });
+        }
+
+        // =================================================================================
+        // 12. SETTINGS
+        // =================================================================================
+        function loadSettings() {
+            db.ref('settings/payment').on('value', snap => {
+                const d = snap.val() || {};
+                document.getElementById('adminUpi').value = d.upiId || '';
+                document.getElementById('adminQr').value = d.qrCode || '';
+            });
+
+            db.ref('settings/community').on('value', snap => {
+                const c = snap.val() || {};
+                document.getElementById('cmsWaGrp').value = c.whatsappGroup || '';
+                document.getElementById('cmsTg').value = c.telegram || '';
+                document.getElementById('cmsWaNum').value = c.whatsappNumber || '';
+                document.getElementById('cmsInsta').value = c.instagram || '';
+                document.getElementById('cmsYt').value = c.youtube || '';
+            });
+
+            db.ref('homeContent').on('value', snap => {
+                const h = snap.val() || {};
+                document.getElementById('cmsTitle').value = h.heroTitle || '';
+            });
+        }
+
+        function savePaymentInfo() { 
+            db.ref('settings/payment').set({ 
+                upiId: document.getElementById('adminUpi').value, 
+                qrCode: document.getElementById('adminQr').value 
+            }); 
+            Swal.fire('Saved', 'Payment details updated.', 'success'); 
+        }
+
+        function saveCms() { 
+            db.ref('settings/community').update({ 
+                whatsappGroup: document.getElementById('cmsWaGrp').value, 
+                telegram: document.getElementById('cmsTg').value,
+                whatsappNumber: document.getElementById('cmsWaNum').value,
+                instagram: document.getElementById('cmsInsta').value,
+                youtube: document.getElementById('cmsYt').value
+            }); 
+            db.ref('homeContent').update({ 
+                heroTitle: document.getElementById('cmsTitle').value 
+            }); 
+            Swal.fire('Saved', 'Community & Website content updated.', 'success'); 
+        }
+
+        // =================================================================================
+        // 13. UI UTILS
+        // =================================================================================
+        function switchView(id, el) {
+            document.querySelectorAll('.view-section').forEach(d => d.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            if(el) el.classList.add('active');
+            if(window.innerWidth < 992) toggleSidebar();
+        }
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); document.querySelector('.overlay').classList.toggle('active'); }
+        function logout() { auth.signOut().then(() => window.location.reload()); }
+
+    </script>
+</body>
+</html>

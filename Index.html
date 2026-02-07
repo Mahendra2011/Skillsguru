@@ -1,0 +1,1800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="SkillGuru - India's Leading Affiliate Marketing & Ed-Tech Platform founded by Mahendra Rathore.">
+    <title>SkillGuru - India's #1 Learning & Earning Platform</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+    <style>
+        /* =========================================
+           1. CSS VARIABLES & RESET
+           ========================================= */
+        :root {
+            --primary: #FF512F; 
+            --secondary: #DD2476;
+            --accent: #F09819;
+            --dark: #0f172a;       
+            --dark-light: #1e293b; 
+            --text-main: #334155;
+            --text-light: #64748b;
+            --bg-light: #f1f5f9;
+            --white: #ffffff;
+            --gradient: linear-gradient(135deg, #FF512F 0%, #DD2476 100%);
+            --gradient-gold: linear-gradient(135deg, #F09819 0%, #EDDE5D 100%);
+            --shadow-sm: 0 4px 6px -1px rgba(0,0,0,0.05);
+            --shadow-md: 0 10px 15px -3px rgba(0,0,0,0.1);
+            --shadow-lg: 0 25px 50px -12px rgba(0,0,0,0.15);
+            --radius: 16px;
+        }
+
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: 'Poppins', sans-serif; 
+            scroll-behavior: smooth; 
+        }
+
+        body { 
+            background-color: var(--bg-light); 
+            color: var(--text-main); 
+            overflow-x: hidden; 
+            line-height: 1.6; 
+        }
+
+        a { 
+            text-decoration: none; 
+            color: inherit; 
+            transition: 0.3s; 
+        }
+
+        ul { 
+            list-style: none; 
+        }
+
+        img { 
+            max-width: 100%; 
+            display: block; 
+        }
+
+        /* =========================================
+           2. UTILITIES & BUTTONS
+           ========================================= */
+        .container { 
+            max-width: 1280px; 
+            margin: 0 auto; 
+            padding: 0 20px; 
+        }
+
+        .section-padding { 
+            padding: 90px 0; 
+        }
+
+        .text-center { 
+            text-align: center; 
+        }
+
+        .text-gradient { 
+            background: var(--gradient); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+            font-weight: 800; 
+        }
+        
+        .badge { 
+            display: inline-block; 
+            padding: 8px 18px; 
+            background: rgba(255, 81, 47, 0.1); 
+            color: var(--primary); 
+            border-radius: 50px; 
+            font-weight: 600; 
+            font-size: 0.85rem; 
+            margin-bottom: 15px; 
+            border: 1px solid rgba(255, 81, 47, 0.2); 
+        }
+
+        .btn { 
+            display: inline-block; 
+            padding: 14px 35px; 
+            border-radius: 50px; 
+            font-weight: 600; 
+            font-size: 1rem; 
+            cursor: pointer; 
+            border: none; 
+            transition: all 0.3s ease; 
+            position: relative; 
+            overflow: hidden; 
+            z-index: 1; 
+        }
+
+        .btn-primary { 
+            background: var(--gradient); 
+            color: white; 
+            box-shadow: 0 10px 20px rgba(221, 36, 118, 0.3); 
+        }
+
+        .btn-primary:hover { 
+            transform: translateY(-3px); 
+            box-shadow: 0 15px 30px rgba(221, 36, 118, 0.4); 
+        }
+        
+        .btn-outline { 
+            background: white; 
+            border: 2px solid var(--secondary); 
+            color: var(--secondary); 
+        }
+
+        .btn-outline:hover { 
+            background: var(--secondary); 
+            color: white; 
+        }
+
+        .section-header { 
+            max-width: 750px; 
+            margin: 0 auto 60px; 
+            text-align: center; 
+        }
+
+        .section-header h2 { 
+            font-size: 2.8rem; 
+            margin-bottom: 15px; 
+            line-height: 1.2; 
+            color: var(--dark); 
+        }
+
+        .section-header p { 
+            color: var(--text-light); 
+            font-size: 1.15rem; 
+        }
+
+        /* =========================================
+           3. NAVIGATION
+           ========================================= */
+        nav { 
+            background: rgba(255,255,255,0.95); 
+            padding: 15px 0; 
+            position: sticky; 
+            top: 0; 
+            z-index: 1000; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.04); 
+            backdrop-filter: blur(10px); 
+        }
+
+        .nav-row { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+        }
+
+        .logo { 
+            font-size: 1.8rem; 
+            font-weight: 800; 
+            color: var(--dark); 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+        }
+        
+        .nav-menu { 
+            display: flex; 
+            gap: 30px; 
+            align-items: center; 
+        }
+
+        .nav-link { 
+            font-weight: 500; 
+            font-size: 1rem; 
+            color: var(--text-main); 
+            position: relative; 
+        }
+
+        .nav-link::after { 
+            content: ''; 
+            position: absolute; 
+            bottom: -5px; 
+            left: 0; 
+            width: 0%; 
+            height: 2px; 
+            background: var(--primary); 
+            transition: 0.3s; 
+        }
+
+        .nav-link:hover::after { 
+            width: 100%; 
+        }
+
+        .nav-link:hover { 
+            color: var(--primary); 
+        }
+
+        .mobile-toggle { 
+            display: none; 
+            font-size: 1.8rem; 
+            color: var(--dark); 
+            cursor: pointer; 
+        }
+
+        /* =========================================
+           4. HERO SECTION
+           ========================================= */
+        .hero { 
+            padding: 140px 0 100px; 
+            background: white; 
+            position: relative; 
+            overflow: hidden; 
+        }
+
+        .hero::before { 
+            content: ''; 
+            position: absolute; 
+            top: -100px; 
+            right: -100px; 
+            width: 600px; 
+            height: 600px; 
+            background: radial-gradient(circle, rgba(221,36,118,0.08) 0%, transparent 70%); 
+            z-index: 0; 
+            border-radius: 50%; 
+        }
+        
+        .hero-grid { 
+            display: grid; 
+            grid-template-columns: 1.2fr 1fr; 
+            gap: 60px; 
+            align-items: center; 
+            position: relative; 
+            z-index: 1; 
+        }
+        
+        .hero-content h1 { 
+            font-size: 3.8rem; 
+            line-height: 1.15; 
+            margin-bottom: 25px; 
+            color: var(--dark); 
+        }
+
+        .hero-content p { 
+            font-size: 1.2rem; 
+            color: var(--text-light); 
+            margin-bottom: 35px; 
+            max-width: 90%; 
+        }
+        
+        .hero-img-wrapper { 
+            position: relative; 
+            text-align: center; 
+        }
+
+        .hero-img { 
+            width: 100%; 
+            max-width: 550px; 
+            border-radius: 30px; 
+            transform: rotate(-2deg); 
+            transition: 0.5s; 
+            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.25); 
+            border: 8px solid white; 
+            display: inline-block; 
+        }
+
+        .hero-img:hover { 
+            transform: rotate(0deg) scale(1.02); 
+        }
+
+        /* Floating Info Cards */
+        .float-card { 
+            position: absolute; 
+            background: white; 
+            padding: 15px 25px; 
+            border-radius: 16px; 
+            box-shadow: var(--shadow-lg); 
+            display: flex; 
+            align-items: center; 
+            gap: 15px; 
+            animation: float 6s ease-in-out infinite; 
+            z-index: 2; 
+            border: 1px solid #f1f5f9; 
+        }
+
+        .fc-1 { 
+            top: 10%; 
+            left: -20px; 
+        }
+
+        .fc-2 { 
+            bottom: 15%; 
+            right: -30px; 
+            animation-delay: 2s; 
+        }
+
+        .fc-icon { 
+            width: 45px; 
+            height: 45px; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 1.4rem; 
+        }
+        
+        @keyframes float { 
+            0%, 100% { transform: translateY(0); } 
+            50% { transform: translateY(-20px); } 
+        }
+
+        /* =========================================
+           5. STATS BAR
+           ========================================= */
+        .stats-bar { 
+            background: var(--dark); 
+            padding: 60px 0; 
+            color: white; 
+            margin-top: -60px; 
+            position: relative; 
+            z-index: 2; 
+            border-radius: 0 0 50px 50px; 
+            box-shadow: var(--shadow-lg); 
+        }
+
+        .stats-grid { 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 20px; 
+            text-align: center; 
+        }
+
+        .stat-item h3 { 
+            font-size: 2.8rem; 
+            color: var(--primary); 
+            margin-bottom: 5px; 
+            font-weight: 800; 
+        }
+
+        .stat-item p { 
+            color: #94a3b8; 
+            font-size: 0.95rem; 
+            text-transform: uppercase; 
+            letter-spacing: 1.5px; 
+            font-weight: 600; 
+        }
+
+        /* =========================================
+           6. LEADERSHIP TEAM SECTION (CEO & CO-FOUNDER)
+           ========================================= */
+        .team-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+            gap: 40px; 
+            justify-content: center; 
+        }
+        
+        .team-card { 
+            background: white; 
+            border-radius: 24px; 
+            padding: 0; 
+            box-shadow: var(--shadow-md); 
+            transition: 0.4s; 
+            overflow: hidden; 
+            border: 1px solid #e2e8f0; 
+            text-align: center; 
+            position: relative; 
+        }
+
+        .team-card:hover { 
+            transform: translateY(-10px); 
+            box-shadow: var(--shadow-lg); 
+            border-color: var(--primary); 
+        }
+        
+        .team-bg { 
+            height: 120px; 
+            background: var(--gradient); 
+            width: 100%; 
+        }
+        
+        .team-img-wrapper { 
+            margin-top: -75px; 
+            display: inline-block; 
+            padding: 5px; 
+            background: white; 
+            border-radius: 50%; 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1); 
+        }
+
+        .team-img { 
+            width: 150px; 
+            height: 150px; 
+            border-radius: 50%; 
+            object-fit: cover; 
+            border: 1px solid #f0f0f0; 
+        }
+        
+        .team-info { 
+            padding: 25px 30px 40px; 
+        }
+
+        .team-role { 
+            color: var(--primary); 
+            font-weight: 600; 
+            font-size: 0.9rem; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            margin-bottom: 5px; 
+        }
+
+        .team-name { 
+            font-size: 1.8rem; 
+            font-weight: 800; 
+            color: var(--dark); 
+            margin-bottom: 15px; 
+        }
+
+        .team-bio { 
+            color: var(--text-light); 
+            font-size: 0.95rem; 
+            line-height: 1.7; 
+            margin-bottom: 25px; 
+            font-style: italic; 
+        }
+        
+        .team-social { 
+            display: flex; 
+            justify-content: center; 
+            gap: 15px; 
+        }
+
+        .team-social a { 
+            width: 40px; 
+            height: 40px; 
+            background: #f1f5f9; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            color: var(--text-main); 
+            transition: 0.3s; 
+        }
+
+        .team-social a:hover { 
+            background: var(--primary); 
+            color: white; 
+        }
+
+        /* =========================================
+           7. DYNAMIC COURSES (FIREBASE)
+           ========================================= */
+        .pkg-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); 
+            gap: 35px; 
+        }
+        
+        .plan-card { 
+            background: white; 
+            border-radius: 24px; 
+            box-shadow: var(--shadow-sm); 
+            border: 1px solid #e2e8f0; 
+            overflow: hidden; 
+            transition: 0.4s; 
+            position: relative; 
+            display: flex; 
+            flex-direction: column; 
+            height: 100%; 
+        }
+
+        .plan-card:hover { 
+            transform: translateY(-12px); 
+            box-shadow: var(--shadow-lg); 
+            border-color: var(--primary); 
+        }
+        
+        .popular-badge { 
+            position: absolute; 
+            top: 20px; 
+            right: 20px; 
+            background: var(--gradient); 
+            color: white; 
+            font-size: 0.75rem; 
+            font-weight: 700; 
+            padding: 6px 15px; 
+            border-radius: 30px; 
+            z-index: 10; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2); 
+        }
+        
+        .plan-img-box { 
+            width: 100%; 
+            height: 220px; 
+            overflow: hidden; 
+            position: relative; 
+        }
+
+        .plan-img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            transition: 0.6s; 
+        }
+
+        .plan-card:hover .plan-img { 
+            transform: scale(1.1); 
+        }
+        
+        .plan-body { 
+            padding: 30px; 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+        }
+
+        .plan-title { 
+            font-size: 1.6rem; 
+            font-weight: 700; 
+            margin-bottom: 5px; 
+            color: var(--dark); 
+        }
+        
+        .price-box { 
+            display: flex; 
+            align-items: baseline; 
+            gap: 10px; 
+            margin-bottom: 25px; 
+        }
+
+        .current-price { 
+            font-size: 2.2rem; 
+            font-weight: 800; 
+            color: var(--primary); 
+        }
+
+        .original-price { 
+            font-size: 1.1rem; 
+            color: #94a3b8; 
+            text-decoration: line-through; 
+        }
+        
+        .feature-list { 
+            list-style: none; 
+            margin-bottom: 30px; 
+            flex: 1; 
+        }
+
+        .feature-list li { 
+            margin-bottom: 12px; 
+            color: var(--text-main); 
+            display: flex; 
+            align-items: flex-start; 
+            gap: 12px; 
+            font-size: 1rem; 
+        }
+
+        .feature-list i { 
+            color: #10b981; 
+            margin-top: 5px; 
+            background: #ecfdf5; 
+            padding: 3px; 
+            border-radius: 50%; 
+            font-size: 0.8rem; 
+        }
+        
+        .loader-box { 
+            grid-column: 1 / -1; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            padding: 50px; 
+        }
+
+        .spinner { 
+            width: 50px; 
+            height: 50px; 
+            border: 5px solid #f3f3f3; 
+            border-top: 5px solid var(--primary); 
+            border-radius: 50%; 
+            animation: spin 1s linear infinite; 
+            margin-bottom: 15px; 
+        }
+
+        @keyframes spin { 
+            0% { transform: rotate(0deg); } 
+            100% { transform: rotate(360deg); } 
+        }
+
+        /* =========================================
+           8. CERTIFICATE & LIVE TRAINING
+           ========================================= */
+        .cert-section { 
+            background: white; 
+            border-radius: 30px; 
+            padding: 60px; 
+            box-shadow: var(--shadow-md); 
+            position: relative; 
+            overflow: hidden; 
+            margin-top: 50px; 
+        }
+
+        .cert-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 50px; 
+            align-items: center; 
+        }
+
+        .cert-img { 
+            width: 100%; 
+            border-radius: 20px; 
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1); 
+            border: 5px solid #f8fafc; 
+        }
+        
+        .live-tag { 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 8px; 
+            background: #fee2e2; 
+            color: #ef4444; 
+            padding: 5px 15px; 
+            border-radius: 20px; 
+            font-weight: 700; 
+            font-size: 0.85rem; 
+            margin-bottom: 15px; 
+        }
+
+        .live-dot { 
+            width: 10px; 
+            height: 10px; 
+            background: #ef4444; 
+            border-radius: 50%; 
+            animation: pulse 1.5s infinite; 
+        }
+
+        @keyframes pulse { 
+            0% { opacity: 1; transform: scale(1); } 
+            50% { opacity: 0.5; transform: scale(1.2); } 
+            100% { opacity: 1; transform: scale(1); } 
+        }
+
+        /* =========================================
+           9. REVIEWS & FAQ
+           ========================================= */
+        .review-card { 
+            background: white; 
+            padding: 35px; 
+            border-radius: 20px; 
+            box-shadow: var(--shadow-sm); 
+            border-bottom: 5px solid var(--primary); 
+            height: 100%; 
+        }
+
+        .user-profile { 
+            display: flex; 
+            align-items: center; 
+            gap: 15px; 
+            margin-bottom: 20px; 
+        }
+
+        .user-img { 
+            width: 60px; 
+            height: 60px; 
+            border-radius: 50%; 
+            object-fit: cover; 
+            border: 2px solid var(--bg-light); 
+        }
+
+        .stars { 
+            color: #f59e0b; 
+            font-size: 0.9rem; 
+            margin-top: 5px; 
+        }
+
+        .faq-item { 
+            background: white; 
+            border-radius: 16px; 
+            margin-bottom: 15px; 
+            overflow: hidden; 
+            border: 1px solid #e2e8f0; 
+            transition: 0.3s; 
+        }
+
+        .faq-item:hover { 
+            border-color: var(--primary); 
+        }
+
+        .faq-header { 
+            padding: 25px; 
+            cursor: pointer; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            font-weight: 600; 
+            color: var(--dark); 
+            font-size: 1.1rem; 
+        }
+
+        .faq-body { 
+            max-height: 0; 
+            overflow: hidden; 
+            transition: 0.4s ease; 
+            padding: 0 25px; 
+            background: #f8fafc; 
+            color: var(--text-light); 
+            line-height: 1.8; 
+        }
+
+        .faq-item.active .faq-body { 
+            padding: 0 25px 25px; 
+            max-height: 300px; 
+        }
+
+        .faq-icon { 
+            transition: 0.3s; 
+            color: var(--text-light); 
+        }
+
+        .faq-item.active .faq-icon { 
+            transform: rotate(180deg); 
+            color: var(--primary); 
+        }
+
+        /* =========================================
+           10. FOOTER
+           ========================================= */
+        footer { 
+            background: var(--dark); 
+            color: white; 
+            padding: 90px 0 30px; 
+            margin-top: 100px; 
+        }
+
+        .footer-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
+            gap: 50px; 
+        }
+
+        .footer-col h4 { 
+            color: white; 
+            margin-bottom: 30px; 
+            font-size: 1.3rem; 
+            position: relative; 
+            display: inline-block; 
+            font-weight: 700; 
+        }
+
+        .footer-col h4::after { 
+            content: ''; 
+            position: absolute; 
+            left: 0; 
+            bottom: -10px; 
+            width: 40px; 
+            height: 3px; 
+            background: var(--primary); 
+            border-radius: 2px; 
+        }
+
+        .footer-links a { 
+            display: block; 
+            color: #94a3b8; 
+            margin-bottom: 15px; 
+            transition: 0.3s; 
+            font-size: 0.95rem; 
+        }
+
+        .footer-links a:hover { 
+            color: var(--primary); 
+            padding-left: 8px; 
+        }
+
+        .social-links a { 
+            display: inline-flex; 
+            width: 45px; 
+            height: 45px; 
+            background: rgba(255,255,255,0.05); 
+            border-radius: 50%; 
+            align-items: center; 
+            justify-content: center; 
+            margin-right: 12px; 
+            transition: 0.3s; 
+            border: 1px solid rgba(255,255,255,0.1); 
+        }
+
+        .social-links a:hover { 
+            background: var(--primary); 
+            border-color: var(--primary); 
+            transform: translateY(-3px); 
+        }
+
+        /* =========================================
+           11. MODALS
+           ========================================= */
+        .modal-overlay { 
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(15, 23, 42, 0.85); 
+            z-index: 2000; 
+            justify-content: center; 
+            align-items: center; 
+            backdrop-filter: blur(8px); 
+            padding: 20px; 
+        }
+
+        .modal-box { 
+            background: white; 
+            width: 100%; 
+            max-width: 480px; 
+            border-radius: 24px; 
+            padding: 40px; 
+            position: relative; 
+            animation: slideUp 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); 
+            max-height: 90vh; 
+            overflow-y: auto; 
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); 
+        }
+
+        .modal-lg { 
+            max-width: 800px; 
+        }
+        
+        @keyframes slideUp { 
+            from { transform: translateY(50px); opacity: 0; } 
+            to { transform: translateY(0); opacity: 1; } 
+        }
+        
+        .close-modal { 
+            position: absolute; 
+            top: 20px; 
+            right: 25px; 
+            font-size: 1.8rem; 
+            cursor: pointer; 
+            color: #94a3b8; 
+            transition: 0.3s; 
+        }
+
+        .close-modal:hover { 
+            color: var(--primary); 
+        }
+        
+        .form-label { 
+            display: block; 
+            margin-bottom: 8px; 
+            font-weight: 600; 
+            font-size: 0.9rem; 
+            color: var(--dark); 
+        }
+
+        .form-input { 
+            width: 100%; 
+            padding: 14px 18px; 
+            border: 2px solid #e2e8f0; 
+            border-radius: 12px; 
+            font-size: 1rem; 
+            margin-bottom: 20px; 
+            transition: 0.3s; 
+            outline: none; 
+            background: #f8fafc; 
+        }
+
+        .form-input:focus { 
+            border-color: var(--primary); 
+            background: white; 
+            box-shadow: 0 0 0 4px rgba(255, 81, 47, 0.1); 
+        }
+        
+        .pkg-summary { 
+            background: #f0fdf4; 
+            border: 1px solid #bbf7d0; 
+            padding: 20px; 
+            border-radius: 16px; 
+            margin-bottom: 25px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+        }
+
+        /* =========================================
+           12. RESPONSIVE
+           ========================================= */
+        @media (max-width: 991px) {
+            .hero-grid { 
+                grid-template-columns: 1fr; 
+                text-align: center; 
+            }
+            .hero-content h1 { 
+                font-size: 3rem; 
+            }
+            .hero-img { 
+                max-width: 80%; 
+                margin: 0 auto; 
+            }
+            .stats-grid { 
+                grid-template-columns: 1fr 1fr; 
+            }
+            .cert-grid { 
+                grid-template-columns: 1fr; 
+                text-align: center; 
+            }
+            .cert-img { 
+                margin-bottom: 30px; 
+            }
+            
+            .nav-menu { 
+                position: fixed; 
+                top: 0; 
+                right: -100%; 
+                width: 85%; 
+                height: 100vh; 
+                background: white; 
+                flex-direction: column; 
+                justify-content: center; 
+                padding: 40px; 
+                box-shadow: -10px 0 30px rgba(0,0,0,0.1); 
+                transition: 0.4s; 
+                z-index: 999; 
+            }
+            .nav-menu.active { 
+                right: 0; 
+            }
+            .mobile-toggle { 
+                display: block; 
+                z-index: 1001; 
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .hero-content h1 { 
+                font-size: 2.4rem; 
+            }
+            .stats-bar { 
+                margin-top: 0; 
+                border-radius: 0; 
+            }
+            .btn { 
+                width: 100%; 
+                margin-bottom: 10px; 
+            }
+            .pkg-summary { 
+                flex-direction: column; 
+                text-align: center; 
+                gap: 5px; 
+            }
+            .section-header h2 { 
+                font-size: 2.2rem; 
+            }
+            .team-img { 
+                width: 120px; 
+                height: 120px; 
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav>
+        <div class="container nav-row">
+            <a href="#" class="logo">
+                <i class="fas fa-rocket text-gradient"></i> Skill<span class="text-gradient">Guru</span>
+            </a>
+            
+            <div class="mobile-toggle" onclick="toggleMenu()">
+                <i class="fas fa-bars"></i>
+            </div>
+
+            <div class="nav-menu" id="navMenu">
+                <a href="#home" class="nav-link" onclick="toggleMenu()">Home</a>
+                <a href="#team" class="nav-link" onclick="toggleMenu()">Founders</a>
+                <a href="#courses" class="nav-link" onclick="toggleMenu()">Courses</a>
+                <a href="#reviews" class="nav-link" onclick="toggleMenu()">Reviews</a>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button class="btn btn-outline" style="padding: 10px 25px;" onclick="openModal('loginModal')">Login</button>
+                    <button class="btn btn-primary" style="padding: 10px 25px;" onclick="window.location.href='#courses'">Join Now</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <header class="hero" id="home">
+        <div class="container hero-grid">
+            <div class="hero-content animate__animated animate__fadeInLeft">
+                <span class="badge"><i class="fas fa-check-circle"></i> ISO Certified Platform</span>
+                <h1>Transform Your Smartphone into an <span class="text-gradient">ATM Machine</span></h1>
+                <p>Learn High-Income Skills like Video Editing, FB Ads & Affiliate Marketing directly from Mahendra Rathore. 50,000+ Students are already earning.</p>
+                <div style="margin-top: 20px;">
+                    <a href="#courses" class="btn btn-primary">Start Earning Today <i class="fas fa-arrow-right"></i></a>
+                    <button onclick="window.location.href='#team'" class="btn btn-outline">Meet Founders</button>
+                </div>
+                <div style="margin-top: 35px; display: flex; align-items: center; gap: 15px;">
+                    <div style="display: flex;">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" style="width:45px; height:45px; border-radius:50%; border:3px solid white; margin-left:-12px; box-shadow: 0 5px 10px rgba(0,0,0,0.1);">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" style="width:45px; height:45px; border-radius:50%; border:3px solid white; margin-left:-12px; box-shadow: 0 5px 10px rgba(0,0,0,0.1);">
+                        <img src="https://randomuser.me/api/portraits/men/86.jpg" style="width:45px; height:45px; border-radius:50%; border:3px solid white; margin-left:-12px; box-shadow: 0 5px 10px rgba(0,0,0,0.1);">
+                    </div>
+                    <div>
+                        <div style="font-weight: 700; color: var(--dark); font-size: 1.1rem;">50k+ Members</div>
+                        <div style="font-size: 0.85rem; color: var(--text-light);">Joined SkillGuru Family</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="hero-img-wrapper animate__animated animate__fadeInRight">
+                <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=1000&auto=format&fit=crop" class="hero-img" alt="Indian Student Success">
+                
+                <div class="float-card fc-1">
+                    <div class="fc-icon" style="background: #dcfce7; color: #16a34a;"><i class="fas fa-wallet"></i></div>
+                    <div>
+                        <div style="font-size:0.8rem; color:#64748b;">Avg. Monthly Income</div>
+                        <div style="font-weight:700; color:#0f172a;">₹25,000 - ₹50,000</div>
+                    </div>
+                </div>
+                <div class="float-card fc-2">
+                    <div class="fc-icon" style="background: #e0f2fe; color: #0284c7;"><i class="fas fa-award"></i></div>
+                    <div>
+                        <div style="font-size:0.8rem; color:#64748b;">Certified Courses</div>
+                        <div style="font-weight:700; color:#0f172a;">Govt. Recognized</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- STATS SECTION -->
+    <div class="stats-bar">
+        <div class="container stats-grid">
+            <div class="stat-item">
+                <h3>50K+</h3>
+                <p>Happy Students</p>
+            </div>
+            <div class="stat-item">
+                <h3>₹1Cr+</h3>
+                <p>Total Payouts</p>
+            </div>
+            <div class="stat-item">
+                <h3>15+</h3>
+                <p>Skill Courses</p>
+            </div>
+            <div class="stat-item">
+                <h3>24/7</h3>
+                <p>Live Support</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- MEET OUR TEAM SECTION -->
+    <section class="section-padding" id="team" style="background: var(--white);">
+        <div class="container">
+            <div class="section-header">
+                <span class="badge">Visionaries</span>
+                <h2>Meet The <span class="text-gradient">Founders</span></h2>
+                <p>The minds behind India's fastest-growing digital entrepreneurship platform.</p>
+            </div>
+
+            <div class="team-grid">
+                
+                <!-- CEO CARD -->
+                <div class="team-card animate__animated animate__fadeInUp">
+                    <div class="team-bg"></div>
+                    <div class="team-img-wrapper">
+                        <img src="https://i.ibb.co/xtwb1ykP/IMG-20251214-WA0020.jpg" class="team-img" alt="Mahendra Rathore">
+                    </div>
+                    <div class="team-info">
+                        <div class="team-role">Founder & CEO</div>
+                        <h3 class="team-name">Mahendra Rathore</h3>
+                        <p class="team-bio">"My mission is to empower 1 Million Indian students to become financially independent before they graduate. Education should lead to Earning."</p>
+                        <div class="team-social">
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CO-FOUNDER CARD -->
+                <div class="team-card animate__animated animate__fadeInUp" style="animation-delay: 0.2s;">
+                    <div class="team-bg"></div>
+                    <div class="team-img-wrapper">
+                        <img src="img/ceo.jpg" class="team-img" alt="Co-Founder">
+                    </div>
+                    <div class="team-info">
+                        <div class="team-role">Co-Founder & COO</div>
+                        <h3 class="team-name">Mrs Jyoti Rathore</h3>
+                        <p class="team-bio">"Building a robust ecosystem where learning meets execution. We ensure that every student gets the right mentorship to succeed."</p>
+                        <div class="team-social">
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="#"><i class="fas fa-envelope"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- WHY SKILLGURU SECTION -->
+    <section class="section-padding" style="background: var(--bg-light);">
+        <div class="container">
+            <div class="section-header">
+                <h2>Why Choose <span class="text-gradient">SkillGuru?</span></h2>
+                <p>We are not just selling courses, we are building a career.</p>
+            </div>
+            <div class="pkg-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+                <div class="review-card" style="text-align: center; border-bottom: none; border-top: 5px solid var(--primary);">
+                    <div class="fc-icon" style="margin: 0 auto 20px; background: rgba(255,81,47,0.1); color: var(--primary);"><i class="fas fa-laptop-code"></i></div>
+                    <h3>Practical Learning</h3>
+                    <p style="color: #64748b; margin-top: 10px;">No boring theory. We teach you exactly which buttons to click to make money online.</p>
+                </div>
+                <div class="review-card" style="text-align: center; border-bottom: none; border-top: 5px solid var(--secondary);">
+                    <div class="fc-icon" style="margin: 0 auto 20px; background: rgba(221,36,118,0.1); color: var(--secondary);"><i class="fas fa-hand-holding-dollar"></i></div>
+                    <h3>Same Day Payout</h3>
+                    <p style="color: #64748b; margin-top: 10px;">We are the only platform in India that processes payouts within 24 hours of request.</p>
+                </div>
+                <div class="review-card" style="text-align: center; border-bottom: none; border-top: 5px solid var(--accent);">
+                    <div class="fc-icon" style="margin: 0 auto 20px; background: rgba(240,152,25,0.1); color: var(--accent);"><i class="fas fa-users"></i></div>
+                    <h3>Community Access</h3>
+                    <p style="color: #64748b; margin-top: 10px;">Get access to our premium Telegram & WhatsApp groups where top earners share secrets.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- LIVE TRAINING PREVIEW -->
+    <section class="section-padding" style="background: white;">
+        <div class="container">
+            <div class="cert-section">
+                <div class="cert-grid">
+                    <div>
+                        <div class="live-tag"><div class="live-dot"></div> Live Training Every Sunday</div>
+                        <h2 style="font-size: 2.5rem; margin-bottom: 20px; color: var(--dark);">Learn directly from <br><span class="text-gradient">Industry Experts</span></h2>
+                        <p style="color: var(--text-light); margin-bottom: 30px; font-size: 1.1rem;">We conduct weekly live webinars on Zoom where Mahendra Rathore and other experts teach new strategies, solve your doubts, and help you scale your income.</p>
+                        <ul class="feature-list">
+                            <li><i class="fas fa-check"></i> Q&A Sessions</li>
+                            <li><i class="fas fa-check"></i> Profile Optimization Audits</li>
+                            <li><i class="fas fa-check"></i> Sales Closing Roleplays</li>
+                        </ul>
+                        <button class="btn btn-primary">Join Next Webinar</button>
+                    </div>
+                    <div>
+                        <img src="https://images.unsplash.com/photo-1551818255-e6e10975bc17?q=80&w=800&auto=format&fit=crop" class="cert-img" alt="Live Webinar">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DYNAMIC COURSES SECTION -->
+    <section class="section-padding" id="courses" style="background: var(--bg-light);">
+        <div class="container">
+            <div class="section-header">
+                <span class="badge">Best Sellers</span>
+                <h2>Select Your <span class="text-gradient">Package</span></h2>
+                <p>One time small investment for lifetime big earnings.</p>
+            </div>
+
+            <div class="pkg-grid" id="packagesContainer">
+                <div class="loader-box">
+                    <div class="spinner"></div>
+                    <p>Fetching Packages from Database...</p>
+                </div>
+            </div>
+            
+        </div>
+    </section>
+
+    <!-- REVIEWS -->
+    <section class="section-padding" id="reviews" style="background: white;">
+        <div class="container">
+            <div class="section-header">
+                <h2>Hall of <span class="text-gradient">Fame</span></h2>
+                <p>See what Indian students are saying about SkillGuru.</p>
+            </div>
+            <div class="pkg-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+                <div class="review-card">
+                    <div class="user-profile">
+                        <img src="https://randomuser.me/api/portraits/men/46.jpg" class="user-img">
+                        <div>
+                            <h5 style="font-weight: 700;">Aman Gupta</h5>
+                            <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                        </div>
+                    </div>
+                    <p style="font-style: italic; color: #555;">"I am a B.Com student from Jaipur. I joined SkillGuru to pay my own fees. In just 2 months, I earned ₹45,000. Mahendra Sir's guidance is best."</p>
+                </div>
+                <div class="review-card">
+                    <div class="user-profile">
+                        <img src="https://randomuser.me/api/portraits/women/65.jpg" class="user-img">
+                        <div>
+                            <h5 style="font-weight: 700;">Sneha Sharma</h5>
+                            <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                        </div>
+                    </div>
+                    <p style="font-style: italic; color: #555;">"Being a housewife, I wanted to work from home. SkillGuru taught me Canva and Affiliate Marketing. Now I earn ₹20k monthly easily."</p>
+                </div>
+                <div class="review-card">
+                    <div class="user-profile">
+                        <img src="https://randomuser.me/api/portraits/men/12.jpg" class="user-img">
+                        <div>
+                            <h5 style="font-weight: 700;">Vikram Lodhi</h5>
+                            <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                        </div>
+                    </div>
+                    <p style="font-style: italic; color: #555;">"The best part is the Passive Income. I referred 10 friends and now I earn commissions even when I am sleeping. Gold Package is a must!"</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ SECTION -->
+    <section class="section-padding" style="background: var(--bg-light);">
+        <div class="container" style="max-width: 800px;">
+            <div class="section-header">
+                <h2>Frequently Asked Questions</h2>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-header" onclick="toggleFaq(this)">
+                    Is SkillGuru legal in India?
+                    <i class="fas fa-chevron-down faq-icon"></i>
+                </div>
+                <div class="faq-body">
+                    <p>Yes, absolutely. SkillGuru acts as an E-learning platform where we sell digital courses. We also offer an Affiliate Program which is 100% legal in India, unlike Ponzi or Pyramid schemes.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-header" onclick="toggleFaq(this)">
+                    I don't have a laptop, can I join?
+                    <i class="fas fa-chevron-down faq-icon"></i>
+                </div>
+                <div class="faq-body">
+                    <p>Yes! 95% of our successful students work using just their smartphones. You only need a basic internet connection and social media apps.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-header" onclick="toggleFaq(this)">
+                    What if I don't earn anything?
+                    <i class="fas fa-chevron-down faq-icon"></i>
+                </div>
+                <div class="faq-body">
+                    <p>We provide training, not a salary. Your earnings depend on your implementation. However, if you follow our "30-Day Action Plan" given in the course, it's impossible to fail.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-header" onclick="toggleFaq(this)">
+                    How do I get my money?
+                    <i class="fas fa-chevron-down faq-icon"></i>
+                </div>
+                <div class="faq-body">
+                    <p>We have a weekly payout system. Whatever you earn from Monday to Sunday gets credited to your bank account on the following Wednesday directly.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA FOOTER -->
+    <section style="background: var(--gradient); padding: 80px 0; text-align: center; color: white;">
+        <div class="container">
+            <h2 style="margin-bottom: 20px; font-size: 2.8rem;">Ready to Change Your Life?</h2>
+            <p style="margin-bottom: 35px; font-size: 1.2rem; opacity: 0.9;">Join 50,000+ students and start your journey with Mahendra Rathore.</p>
+            <button onclick="window.location.href='#courses'" class="btn" style="background: white; color: var(--primary);">Get Started Now</button>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container footer-grid">
+            <div class="footer-col">
+                <a href="#" class="logo" style="color: white; margin-bottom: 25px;">Skill<span style="color:var(--primary)">Guru</span></a>
+                <p style="color: #94a3b8; font-size: 0.95rem; line-height: 1.7; margin-bottom: 20px;">SkillGuru is India's leading Ed-Tech platform providing practical skill-based education to help youth achieve financial freedom. Registered MSME.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                    <a href="#"><i class="fab fa-telegram"></i></a>
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                </div>
+            </div>
+            <div class="footer-col footer-links">
+                <h4>Company</h4>
+                <a href="#home">Home</a>
+                <a href="#team">Meet Founders</a>
+                <a href="#about">About Us</a>
+                <a href="#reviews">Success Stories</a>
+                <a onclick="openModal('loginModal')">Student Login</a>
+            </div>
+            <div class="footer-col footer-links">
+                <h4>Legal</h4>
+                <a onclick="openModal('privacyModal')">Privacy Policy</a>
+                <a onclick="openModal('termsModal')">Terms & Conditions</a>
+                <a onclick="openModal('refundModal')">Refund Policy</a>
+                <a href="#">Earnings Disclaimer</a>
+                <a href="#">Contact Support</a>
+            </div>
+            <div class="footer-col">
+                <h4>Get in Touch</h4>
+                <p style="color: #94a3b8; margin-bottom: 15px; display: flex; gap: 10px;"><i class="fas fa-map-marker-alt" style="color:var(--primary); margin-top:5px;"></i> Indore, Madhya Pradesh,<br>India - 452001</p>
+                <p style="color: #94a3b8; margin-bottom: 15px; display: flex; gap: 10px;"><i class="fas fa-envelope" style="color:var(--primary); margin-top:5px;"></i> skillguruad@gmail.com</p>
+                <p style="color: #94a3b8; display: flex; gap: 10px;"><i class="fas fa-phone-alt" style="color:var(--primary); margin-top:5px;"></i> +91 8103720056<br><span style="font-size:0.8rem">(Mon-Sat, 10 AM - 6 PM)</span></p>
+            </div>
+        </div>
+        <div class="text-center" style="margin-top: 80px; padding-top: 25px; border-top: 1px solid #334155; color: #64748b; font-size: 0.9rem;">
+            &copy; 2025 SkillGuru India. All Rights Reserved. Designed with <i class="fas fa-heart" style="color:red"></i> for Success.
+        </div>
+    </footer>
+
+    <!-- MODALS -->
+
+    <!-- LOGIN MODAL -->
+    <div id="loginModal" class="modal-overlay">
+        <div class="modal-box">
+            <span class="close-modal" onclick="closeModal('loginModal')">&times;</span>
+            <div class="text-center" style="margin-bottom: 25px;">
+                <h2 class="text-gradient">Welcome Back</h2>
+                <p style="color: var(--text-light);">Login to access your dashboard</p>
+            </div>
+            <form id="loginForm">
+                <label class="form-label">Email Address</label>
+                <input type="email" id="loginEmail" class="form-input" placeholder="e.g. rahul@example.com" required>
+                
+                <label class="form-label">Password</label>
+                <input type="password" id="loginPass" class="form-input" placeholder="Enter password" required>
+                
+                <div style="text-align: right; margin-bottom: 20px;">
+                    <a href="#" onclick="openForgotModal()" style="color: var(--primary); font-size: 0.9rem; font-weight: 500;">Forgot Password?</a>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Login Dashboard</button>
+            </form>
+            <p class="text-center" style="margin-top: 20px; font-size: 0.9rem;">
+                Don't have an account? <a href="#courses" onclick="closeModal('loginModal')" style="color: var(--primary); font-weight: 600;">Register Now</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- FORGOT PASSWORD MODAL -->
+    <div id="forgotModal" class="modal-overlay">
+        <div class="modal-box">
+            <span class="close-modal" onclick="closeModal('forgotModal')">&times;</span>
+            <div class="text-center" style="margin-bottom: 25px;">
+                <h2 class="text-gradient">Reset Password</h2>
+                <p style="color: var(--text-light);">Enter your registered email to reset password</p>
+            </div>
+            
+            <form id="forgotForm">
+                <label class="form-label">Registered Email Address</label>
+                <input type="email" id="resetEmail" class="form-input" placeholder="e.g. rahul@example.com" required>
+                
+                <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 20px; background: #f1f5f9; padding: 10px; border-radius: 8px;">
+                    <i class="fas fa-info-circle"></i> Security Note: You will receive a secure link on this email. Click that link to set your <b>New Password</b> and <b>Confirm New Password</b> automatically.
+                </p>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Send Reset Link <i class="fas fa-paper-plane"></i></button>
+            </form>
+            
+            <p class="text-center" style="margin-top: 20px; font-size: 0.9rem;">
+                Remembered it? <a href="#" onclick="openModal('loginModal'); closeModal('forgotModal')" style="color: var(--primary); font-weight: 600;">Back to Login</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- REGISTER MODAL (UPDATED LOGIC) -->
+    <div id="registerModal" class="modal-overlay">
+        <div class="modal-box">
+            <span class="close-modal" onclick="closeModal('registerModal')">&times;</span>
+            <div class="text-center" style="margin-bottom: 20px;">
+                <h2 class="text-gradient">Create Account</h2>
+                <p style="color: var(--text-light);">Start your earning journey today</p>
+            </div>
+
+            <!-- Package Summary -->
+            <div class="pkg-summary">
+                <div>
+                    <span style="font-size: 0.85rem; color: #666;">Selected Package:</span><br>
+                    <strong style="color: var(--dark); font-size: 1.1rem;" id="regPkgName">Loading...</strong>
+                </div>
+                <div style="text-align: right;">
+                    <span style="font-size: 0.85rem; color: #666;">Total Price:</span><br>
+                    <strong style="color: var(--primary); font-size: 1.3rem;" id="regPkgPrice">₹0</strong>
+                </div>
+            </div>
+
+            <form id="regForm">
+                <!-- Hidden Inputs -->
+                <input type="hidden" id="hPkgId">
+                <input type="hidden" id="hPkgName">
+                <input type="hidden" id="hPkgPrice">
+
+                <label class="form-label">Full Name</label>
+                <input type="text" id="regName" class="form-input" placeholder="e.g. Rahul Sharma" required>
+
+                <label class="form-label">Email Address</label>
+                <input type="email" id="regEmail" class="form-input" placeholder="e.g. rahul@gmail.com" required>
+
+                <label class="form-label">Mobile Number (WhatsApp)</label>
+                <input type="tel" id="regMobile" class="form-input" placeholder="10 Digit Mobile Number" required>
+
+                <label class="form-label">Create Password</label>
+                <input type="password" id="regPass" class="form-input" placeholder="Strong Password" required>
+
+                <!-- REFERRAL CODE IS MANDATORY -->
+                <label class="form-label">Referral Code <span style="color:red">*</span></label>
+                <input type="text" id="regRef" class="form-input" placeholder="Enter Valid Affiliate Code" required>
+                
+                <div style="display: flex; gap: 10px; margin-bottom: 25px;">
+                    <input type="checkbox" required id="termsCheck">
+                    <label for="termsCheck" style="font-size: 0.85rem; color: #666;">I agree to the <a href="#" onclick="openModal('termsModal')" style="color:var(--primary)">Terms & Conditions</a></label>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Proceed to Payment <i class="fas fa-lock"></i></button>
+            </form>
+        </div>
+    </div>
+
+    <!-- LEGAL MODALS -->
+    <div id="termsModal" class="modal-overlay">
+        <div class="modal-box modal-lg">
+            <span class="close-modal" onclick="closeModal('termsModal')">&times;</span>
+            <h2>Terms and Conditions</h2>
+            <div style="margin-top: 20px; color: #555; line-height: 1.8;">
+                <p><strong>Effective Date:</strong> Jan 2025</p>
+                <p>Welcome to SkillGuru. By enrolling in our courses, you agree to the following:</p>
+                <h4>1. Educational Purpose</h4>
+                <p>SkillGuru provides skill-based training. We do not guarantee employment or specific income figures. Your results depend on your effort.</p>
+                <h4>2. Affiliate Program</h4>
+                <p>Participation in the affiliate program is optional. You are not an employee of SkillGuru but an independent contractor.</p>
+                <h4>3. Account Usage</h4>
+                <p>Sharing your account credentials with others will lead to immediate suspension without refund.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="refundModal" class="modal-overlay">
+        <div class="modal-box modal-lg">
+            <span class="close-modal" onclick="closeModal('refundModal')">&times;</span>
+            <h2>Refund Policy</h2>
+            <div style="margin-top: 20px; color: #555; line-height: 1.8;">
+                <p>We strive to provide excellent value. However, please note:</p>
+                <h4>1. Digital Goods</h4>
+                <p>Since our products are digital courses with immediate access, we have a strict <strong>No Refund Policy</strong> once the course has been accessed.</p>
+                <h4>2. Exceptions</h4>
+                <p>Refunds are only processed if a technical error prevents you from accessing the content, and our support team fails to resolve it within 7 days.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="privacyModal" class="modal-overlay">
+        <div class="modal-box modal-lg">
+            <span class="close-modal" onclick="closeModal('privacyModal')">&times;</span>
+            <h2>Privacy Policy</h2>
+            <div style="margin-top: 20px; color: #555; line-height: 1.8;">
+                <p>Your privacy is important to us.</p>
+                <h4>1. Data Collection</h4>
+                <p>We collect your name, email, and phone number solely for account creation and communication regarding your courses.</p>
+                <h4>2. Data Protection</h4>
+                <p>We do not sell your personal data to third-party advertisers.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- FIREBASE SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+
+    <script>
+        // =========================================
+        // 1. FIREBASE CONFIGURATION
+        // =========================================
+       const firebaseConfig = {
+    apiKey: "AIzaSyBSUjAVEj0u85ul27JzRGVhEaT4SIBDRjk",
+    authDomain: "wrok-skillguru.firebaseapp.com",
+    databaseURL: "https://wrok-skillguru-default-rtdb.firebaseio.com",
+    projectId: "wrok-skillguru",
+    storageBucket: "wrok-skillguru.firebasestorage.app",
+    messagingSenderId: "636485224747",
+    appId: "1:636485224747:web:f3865040f4dd7e1d2a9d6e"
+  };
+        
+        // Initialize Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.database();
+        const auth = firebase.auth();
+
+        // =========================================
+        // 2. UI FUNCTIONS
+        // =========================================
+        
+        function toggleMenu() {
+            const menu = document.getElementById('navMenu');
+            menu.classList.toggle('active');
+        }
+
+        function openModal(id) {
+            document.getElementById(id).style.display = 'flex';
+        }
+        
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        function toggleFaq(element) {
+            const parent = element.parentElement;
+            parent.classList.toggle('active');
+        }
+
+        window.onclick = function(e) {
+            if (e.target.classList.contains('modal-overlay')) {
+                e.target.style.display = 'none';
+            }
+        }
+
+        // =========================================
+        // 3. DYNAMIC PACKAGE LOADING
+        // =========================================
+        const pkgContainer = document.getElementById('packagesContainer');
+
+        function loadPackages() {
+            const packagesRef = db.ref('packages');
+            
+            packagesRef.on('value', (snapshot) => {
+                pkgContainer.innerHTML = ''; 
+                
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    const packageArray = [];
+
+                    for (let key in data) {
+                        packageArray.push({ id: key, ...data[key] });
+                    }
+
+                    packageArray.sort((a, b) => a.price - b.price);
+
+                    packageArray.forEach(pkg => {
+                        let featuresHtml = '';
+                        let featureList = Array.isArray(pkg.features) ? pkg.features : (pkg.features ? pkg.features.split(',') : ['Full Access']);
+                        
+                        featureList.forEach(f => {
+                            featuresHtml += `<li><i class="fas fa-check"></i> ${f.trim()}</li>`;
+                        });
+
+                        let badgeHtml = pkg.isPopular ? `<div class="popular-badge">Most Popular</div>` : '';
+                        let imgSrc = pkg.image || 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=800&auto=format&fit=crop';
+
+                        const cardHtml = `
+                        <div class="plan-card">
+                            ${badgeHtml}
+                            <div class="plan-img-box">
+                                <img src="${imgSrc}" class="plan-img" alt="${pkg.title}">
+                            </div>
+                            <div class="plan-body">
+                                <h3 class="plan-title">${pkg.title}</h3>
+                                <div class="price-box">
+                                    <div class="current-price">₹${pkg.price}</div>
+                                    <div class="original-price">₹${pkg.originalPrice || (pkg.price * 2)}</div>
+                                </div>
+                                <ul class="feature-list">
+                                    ${featuresHtml}
+                                </ul>
+                                <button class="btn btn-primary" style="width:100%" 
+                                    onclick="openRegisterModal('${pkg.title}', ${pkg.price}, '${pkg.id}')">
+                                    Enroll Now
+                                </button>
+                            </div>
+                        </div>
+                        `;
+                        pkgContainer.innerHTML += cardHtml;
+                    });
+                } else {
+                    pkgContainer.innerHTML = `
+                        <div style="grid-column: 1/-1; text-align: center; padding: 50px;">
+                            <h3>No Packages Found</h3>
+                            <p>Admin has not added any packages yet.</p>
+                        </div>
+                    `;
+                }
+            });
+        }
+
+        // =========================================
+        // 4. REGISTRATION LOGIC (UPDATED WITH DB CHECK & 50% OFF)
+        // =========================================
+        
+        window.openRegisterModal = function(title, price, id) {
+            document.getElementById('regPkgName').innerText = title;
+            document.getElementById('regPkgPrice').innerText = "₹" + price;
+            
+            document.getElementById('hPkgName').value = title;
+            document.getElementById('hPkgPrice').value = price;
+            document.getElementById('hPkgId').value = id;
+            
+            openModal('registerModal');
+        };
+
+        document.getElementById('regForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const btn = e.target.querySelector('button');
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+            btn.disabled = true;
+
+            const name = document.getElementById('regName').value;
+            const email = document.getElementById('regEmail').value;
+            const mobile = document.getElementById('regMobile').value;
+            const pass = document.getElementById('regPass').value;
+            const refCode = document.getElementById('regRef').value.trim();
+            const termsCheck = document.getElementById('termsCheck').checked;
+
+            // 1. Check Terms
+            if(!termsCheck) {
+                alert("Please agree to the Terms & Conditions");
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                return;
+            }
+
+            // 2. Validate Referral Code from Firebase Database
+            if (!refCode) {
+                alert("Referral Code is Required!");
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                return;
+            }
+
+            try {
+                // Check if the entered referral code (username) exists in DB
+                const usersRef = db.ref('users');
+                const snapshot = await usersRef.orderByChild('username').equalTo(refCode).once('value');
+
+                if (!snapshot.exists()) {
+                    // CODE DOES NOT EXIST - STOP SIGNUP
+                    alert("INVALID REFERRAL CODE!\n\nThe code you entered does not exist in our database.\nYou cannot join without a valid referral code.");
+                    document.getElementById('regRef').style.borderColor = "red";
+                    btn.innerHTML = originalBtnText;
+                    btn.disabled = false;
+                    return; // Exit function
+                }
+
+                // CODE IS VALID - PROCEED
+                document.getElementById('regRef').style.borderColor = "#10b981"; // Green border
+                
+                // 3. Logic for 50% Off
+                const originalPkgPrice = parseInt(document.getElementById('hPkgPrice').value);
+                const pkgName = document.getElementById('hPkgName').value;
+                const discountedPrice = originalPkgPrice / 2; // 50% Calculation
+
+                // 4. Create User in Auth
+                const userCred = await auth.createUserWithEmailAndPassword(email, pass);
+                const uid = userCred.user.uid;
+
+                // 5. Generate New Username
+                const randomNum = Math.floor(1000 + Math.random() * 9000);
+                const firstName = name.split(' ')[0].toLowerCase().replace(/[^a-z0-9]/g, '');
+                const username = `${firstName}${randomNum}`;
+
+                // 6. Save User to DB (Keep original Price for commission logic, but note payment)
+                await db.ref('users/' + uid).set({
+                    uid: uid,
+                    name: name,
+                    email: email,
+                    mobile: mobile,
+                    username: username,
+                    package: pkgName,
+                    packagePrice: originalPkgPrice, // Keeps original price for commission calc
+                    paidAmount: discountedPrice,   // Actual amount paid by user
+                    referrer: refCode,
+                    status: 'Pending Payment',
+                    joinedAt: new Date().toISOString(),
+                    role: 'student',
+                    wallet: 0
+                });
+
+                alert(`Referral Verified! You got 50% Discount.\nOriginal: ₹${originalPkgPrice} -> Pay Now: ₹${discountedPrice}`);
+                
+                // 7. Redirect to Payment with DISCOUNTED Price
+                window.location.href = `payment.html?uid=${uid}&amt=${discountedPrice}&pkg=${encodeURIComponent(pkgName)}`;
+
+            } catch (error) {
+                console.error(error);
+                alert("Registration Failed: " + error.message);
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+            }
+        });
+
+        // =========================================
+        // 5. LOGIN & FORGOT PASSWORD
+        // =========================================
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const pass = document.getElementById('loginPass').value;
+            const btn = e.target.querySelector('button');
+            const originalText = btn.innerHTML;
+            
+            btn.innerHTML = 'Verifying...';
+            btn.disabled = true;
+
+            auth.signInWithEmailAndPassword(email, pass)
+                .then((userCred) => {
+                    if(email === 'admin@skillguru.com') { 
+                        window.location.href = 'admin-dashboard.html';
+                    } else {
+                        window.location.href = 'user-dashboard.html';
+                    }
+                })
+                .catch((error) => {
+                    alert("Login Failed: " + error.message);
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                });
+        });
+
+        function openForgotModal() {
+            closeModal('loginModal'); 
+            openModal('forgotModal'); 
+        }
+
+        document.getElementById('forgotForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('resetEmail').value;
+            const btn = e.target.querySelector('button');
+            const originalText = btn.innerHTML;
+            
+            btn.innerHTML = 'Sending...';
+            btn.disabled = true;
+
+            auth.sendPasswordResetEmail(email)
+                .then(() => {
+                    alert("✅ Password Reset Link Sent!\nCheck your Email.");
+                    btn.innerHTML = "Link Sent ✅";
+                    setTimeout(() => {
+                        closeModal('forgotModal');
+                        openModal('loginModal');
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                        document.getElementById('resetEmail').value = ""; 
+                    }, 3000);
+                })
+                .catch((error) => {
+                    alert("❌ Error: " + error.message);
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                });
+        });
+
+        // =========================================
+        // 6. INITIALIZATION
+        // =========================================
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const refParam = urlParams.get('ref');
+            
+            if (refParam) {
+                localStorage.setItem('skillGuruRef', refParam);
+            }
+            
+            const savedRef = localStorage.getItem('skillGuruRef');
+            const refInput = document.getElementById('regRef');
+            if (savedRef && refInput) {
+                refInput.value = savedRef;
+                refInput.readOnly = true;
+                refInput.style.backgroundColor = "#f0fdf4";
+                refInput.style.borderColor = "#4ade80";
+            }
+
+            loadPackages();
+        };
+
+    </script>
+</body>
+</html>

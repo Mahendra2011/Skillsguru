@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Payment - SkillGuru</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        body { background: #f0f2f5; font-family: 'Poppins', sans-serif; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
+        
+        .pay-card { background: white; width: 100%; max-width: 420px; padding: 30px 25px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.08); text-align: center; border: 1px solid #fff; }
+        
+        h2 { color: #333; margin-bottom: 5px; font-size: 1.5rem; }
+        .pkg-name { color: #666; font-size: 0.9rem; margin-bottom: 20px; }
+        
+        .amount-box { background: linear-gradient(135deg, #4361ee, #3f37c9); padding: 15px; border-radius: 12px; color: white; margin-bottom: 25px; box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3); }
+        .amount-box small { font-size: 0.8rem; opacity: 0.9; }
+        .amount { font-size: 2rem; font-weight: 700; margin-top: 5px; }
+
+        .qr-container { position: relative; display: inline-block; padding: 10px; border: 2px dashed #ddd; border-radius: 15px; margin-bottom: 10px; background: #fafafa; }
+        .qr-img { width: 180px; height: 180px; object-fit: contain; border-radius: 10px; }
+        
+        /* Download Button */
+        .dwn-btn { display: inline-block; margin-bottom: 25px; font-size: 0.85rem; color: #4361ee; font-weight: 600; text-decoration: none; border: 1px solid #4361ee; padding: 5px 15px; border-radius: 20px; transition: 0.3s; cursor: pointer; }
+        .dwn-btn:hover { background: #4361ee; color: white; }
+
+        .upi-container { display: flex; align-items: center; background: #eef2ff; border: 1px solid #c7d2fe; padding: 10px 15px; border-radius: 50px; margin-bottom: 25px; justify-content: space-between; }
+        .upi-text { font-weight: 600; color: #4361ee; font-size: 0.95rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 200px; }
+        .copy-btn { background: #4361ee; color: white; border: none; padding: 6px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: 0.2s; }
+        .copy-btn:hover { background: #3f37c9; }
+
+        /* Payment Apps Grid */
+        .pay-apps-label { text-align: left; font-size: 0.85rem; font-weight: 600; color: #555; margin-bottom: 10px; display: block; }
+        .apps-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 25px; }
+        .app-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; background: #fff; border: 1px solid #eee; padding: 10px; border-radius: 12px; cursor: pointer; text-decoration: none; color: #333; transition: 0.3s; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .app-btn:hover { border-color: #4361ee; transform: translateY(-3px); box-shadow: 0 5px 12px rgba(67,97,238,0.15); }
+        .app-btn img { width: 35px; height: 35px; margin-bottom: 5px; object-fit: contain; }
+        .app-btn span { font-size: 0.75rem; font-weight: 600; }
+
+        .form-label { text-align: left; display: block; font-size: 0.85rem; font-weight: 600; color: #555; margin-bottom: 8px; }
+        .input-field { width: 100%; padding: 14px; border: 1px solid #e0e0e0; border-radius: 10px; margin-bottom: 20px; font-size: 1rem; outline: none; transition: 0.3s; background: #f9f9f9; }
+        .input-field:focus { border-color: #4361ee; background: #fff; }
+
+        .submit-btn { width: 100%; padding: 14px; background: #333; color: white; border: none; border-radius: 12px; font-weight: 600; font-size: 1rem; cursor: pointer; transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
+        
+        .swal2-popup { font-family: 'Poppins', sans-serif !important; }
+    </style>
+</head>
+<body>
+
+    <div class="pay-card">
+        <h2>Complete Payment</h2>
+        <div class="pkg-name">You are buying: <span id="pkgName" style="color:#333; font-weight:bold;">Loading...</span></div>
+        
+        <div class="amount-box">
+            <small>Amount to Pay</small>
+            <!-- Displays the Discounted Price -->
+            <div class="amount">₹<span id="payAmt">--</span></div>
+        </div>
+        
+        <div class="qr-container">
+            <img src="https://i.ibb.co/j9dxyjzB/IMG-20251226-WA0022.jpg" id="adminQr" class="qr-img">
+            <p style="margin:5px 0 0; font-size:0.7rem; color:#888;">Scan to Pay</p>
+        </div>
+        
+        <!-- Download QR Option -->
+        <div>
+            <a onclick="downloadQr(event)" href="#" class="dwn-btn"><i class="fas fa-download"></i> Download QR</a>
+        </div>
+
+        <div class="form-label">Pay via UPI ID</div>
+        <div class="upi-container">
+            <!-- Default ID -->
+            <span id="adminUpi" class="upi-text">7440752443@airtel</span>
+            <button onclick="copyUpi()" class="copy-btn"><i class="fas fa-copy"></i> Copy</button>
+        </div>
+
+        <!-- Payment Apps Section -->
+        <span class="pay-apps-label">Pay directly via App:</span>
+        <div class="apps-grid">
+            <a id="btnGpay" href="#" class="app-btn">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/Google_Pay_%28GPay%29_Logo_%282018-2020%29.svg" alt="GPay">
+                <span>GPay</span>
+            </a>
+            <a id="btnPhonePe" href="#" class="app-btn">
+                <img src="https://download.logo.wine/logo/PhonePe/PhonePe-Logo.wine.png" alt="PhonePe">
+                <span>PhonePe</span>
+            </a>
+            <a id="btnPaytm" href="#" class="app-btn">
+                <img src="https://download.logo.wine/logo/Paytm/Paytm-Logo.wine.png" alt="Paytm">
+                <span>Paytm</span>
+            </a>
+        </div>
+
+        <div style="text-align: left;">
+            <label class="form-label">Step 2: Enter Transaction ID (UTR)</label>
+            <input type="text" id="utr" class="input-field" placeholder="8 to 12 Digit UTR Number" maxlength="12">
+        </div>
+        
+        <button class="submit-btn" onclick="submitPayment()">Verify & Activate Account</button>
+    </div>
+
+    <!-- FIREBASE SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+
+    <script>
+       const firebaseConfig = {
+    apiKey: "AIzaSyBSUjAVEj0u85ul27JzRGVhEaT4SIBDRjk",
+    authDomain: "wrok-skillguru.firebaseapp.com",
+    databaseURL: "https://wrok-skillguru-default-rtdb.firebaseio.com",
+    projectId: "wrok-skillguru",
+    storageBucket: "wrok-skillguru.firebasestorage.app",
+    messagingSenderId: "636485224747",
+    appId: "1:636485224747:web:f3865040f4dd7e1d2a9d6e"
+  };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        // 1. GET URL PARAMETERS (UPDATED LOGIC)
+        const params = new URLSearchParams(window.location.search);
+        const uid = params.get('uid');
+        let pkgParam = params.get('pkg') || '';
+        
+        // CRITICAL FIX: Look for 'amt' (sent from index.html) first.
+        // This ensures the 50% discount passed in URL is prioritized.
+        let amountParam = params.get('amt') || params.get('amount') || '0';
+        
+        // Initialize Default UPI
+        let currentUpiId = "7440752443@airtel"; 
+        document.getElementById('adminUpi').innerText = currentUpiId;
+
+        // 2. LOAD DATA
+        if(pkgParam) document.getElementById('pkgName').innerText = pkgParam;
+        
+        // Logic: If amount is present in URL (e.g. 50% off), use it.
+        // If not, fetch full price from DB (Fallback).
+        if(!amountParam || amountParam === '0') {
+            db.ref('packages').once('value').then(snap => {
+                let found = false;
+                snap.forEach(c => {
+                    const p = c.val();
+                    if(p.title && pkgParam && p.title.toLowerCase() === pkgParam.toLowerCase()) {
+                        amountParam = p.price;
+                        found = true;
+                    }
+                });
+                if(found) {
+                    document.getElementById('payAmt').innerText = amountParam;
+                    updateAppLinks(amountParam);
+                } else {
+                    document.getElementById('payAmt').innerText = "0 (Error)";
+                    Swal.fire("Error", "Package not found. Please contact admin.", "error");
+                }
+            });
+        } else {
+            // Amount found in URL (The Discounted Price)
+            document.getElementById('payAmt').innerText = amountParam;
+            updateAppLinks(amountParam);
+        }
+
+        // 3. FETCH ADMIN PAYMENT DETAILS (Optional Override)
+        const paymentRef = db.ref('settings/payment');
+        paymentRef.on('value', (snap) => {
+            const data = snap.val();
+            if(data) {
+                const upiID = data.upi || data.upiId || data.UPI; 
+                if(upiID) {
+                    currentUpiId = upiID;
+                    document.getElementById('adminUpi').innerText = upiID;
+                    if(amountParam && amountParam !== '0') updateAppLinks(amountParam);
+                }
+                
+                if(data.qrCode) document.getElementById('adminQr').src = data.qrCode;
+            }
+        });
+
+        // 4. UPDATE APP LINKS (GPay, PhonePe, Paytm)
+        function updateAppLinks(amt) {
+            const upiBase = `pa=${currentUpiId}&pn=SkillGuru&am=${amt}&cu=INR`;
+            
+            const gpayLink = `tez://upi/pay?${upiBase}`; 
+            const genericLink = `upi://pay?${upiBase}`; 
+            const phonePeLink = `phonepe://pay?${upiBase}`;
+            const paytmLink = `paytmmp://pay?${upiBase}`;
+
+            document.getElementById('btnGpay').href = genericLink; 
+            document.getElementById('btnPhonePe').href = phonePeLink;
+            document.getElementById('btnPaytm').href = paytmLink;
+        }
+
+        // 5. DOWNLOAD QR FUNCTION
+        async function downloadQr(e) {
+            e.preventDefault();
+            const imgUrl = document.getElementById('adminQr').src;
+            try {
+                const response = await fetch(imgUrl);
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = 'payment-qr.jpg';
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            } catch (err) {
+                window.open(imgUrl, '_blank');
+            }
+        }
+
+        // 6. COPY FUNCTION
+        function copyUpi() {
+            const textToCopy = document.getElementById('adminUpi').innerText;
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(textToCopy).then(() => showSuccessToast(textToCopy));
+            } else {
+                const textArea = document.createElement("textarea");
+                textArea.value = textToCopy;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showSuccessToast(textToCopy);
+            }
+        }
+
+        function showSuccessToast(copiedText) {
+            Swal.fire({
+                toast: true, position: 'top-end', icon: 'success', 
+                title: 'Copied!', showConfirmButton: false, timer: 3000
+            });
+        }
+
+        // 7. SUBMIT WITH VALIDATION
+        function submitPayment() {
+            const utr = document.getElementById('utr').value.trim();
+            // This grabs the DISCOUNTED price currently shown on screen
+            const currentAmount = document.getElementById('payAmt').innerText;
+            
+            if(!uid) return Swal.fire({ icon: 'error', title: 'User Error', text: 'User ID missing. Please login again.' });
+            
+            if(utr.length < 8 || utr.length > 12) {
+                return Swal.fire({ 
+                    icon: 'warning', 
+                    title: 'Invalid UTR', 
+                    text: 'UTR/Ref No must be between 8 to 12 digits.' 
+                });
+            }
+
+            if(currentAmount === '0' || currentAmount === '--' || currentAmount.includes('Error')) {
+                return Swal.fire({ icon: 'error', title: 'Price Error', text: 'Invalid package price.' });
+            }
+
+            const submitBtn = document.querySelector('.submit-btn');
+            submitBtn.innerText = "Processing...";
+            submitBtn.disabled = true;
+
+            const dateNow = new Date().toISOString();
+
+            // 1. Update User Profile
+            const userUpdate = db.ref('users/' + uid).update({
+                utrNumber: utr,
+                status: 'Verification Pending',
+                paymentDate: dateNow
+            });
+
+            // 2. Add to Payment Logs for Admin (Sends Discounted Amount)
+            const logUpdate = db.ref('payment_logs').push({
+                uid: uid,
+                utr: utr,
+                package: pkgParam,
+                amount: currentAmount, // Sends the 50% discounted price to Admin
+                date: dateNow,
+                status: 'Pending'
+            });
+
+            Promise.all([userUpdate, logUpdate]).then(() => {
+                Swal.fire({
+                    icon: 'success', title: 'Payment Submitted!',
+                    text: 'Admin will verify and activate your account.',
+                    confirmButtonText: 'Go to Home', confirmButtonColor: '#4361ee', allowOutsideClick: false
+                }).then((result) => {
+                    if (result.isConfirmed) window.location.href = 'index.html';
+                });
+            }).catch(err => {
+                submitBtn.innerText = "Verify & Activate Account";
+                submitBtn.disabled = false;
+                Swal.fire({ icon: 'error', title: 'Error', text: err.message });
+            });
+        }
+    </script>
+</body>
+</html>
